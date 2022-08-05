@@ -1,0 +1,72 @@
+import { lazy, Suspense } from 'react';
+import Layout from '../layouts/common-layout';
+
+import Login from '../pages/login'
+
+
+const Dashboard = lazy(() => import('../pages/dashboard'));
+
+const User = lazy(() => import('../pages/user'));
+
+const DomainList = lazy(() => import('../pages/data/domain'));
+const InterfaceList = lazy(() => import('../pages/data/interface'));
+const ErrorList = lazy(() => import('../pages/data/error'));
+
+const AlarmList = lazy(() => import('../pages/alarm/list'));
+const AlarmSetting = lazy(() => import('../pages/alarm/setting'));
+
+const SystemSetting = lazy(() => import('../pages/system/setting'));
+
+
+const lazyload = (children) => {
+    return <Suspense fallback={<h1>Loading ...</h1>}>
+        { children }
+    </Suspense>
+}
+
+const routerOptions = [
+    {
+        path: '/',
+        element: <Layout/>,
+        children: [
+            {
+                index: true,
+                element: lazyload(<Dashboard/>),
+            },
+            {
+                path: '/user',
+                element: lazyload(<User/>),
+            },
+            {
+                path: '/data-domain-list',
+                element: lazyload(<DomainList />)
+            },
+            {
+                path: '/data-interface-list',
+                element: lazyload(<InterfaceList />)
+            },
+            {
+                path: '/data-error-list',
+                element: lazyload(<ErrorList />)
+            },
+            {
+                path: '/alarm-list',
+                element: lazyload(<AlarmList />)
+            },
+            {
+                path: '/alarm-setting',
+                element: lazyload(<AlarmSetting />)
+            },
+            {
+                path: '/system-setting',
+                element: lazyload(<SystemSetting />)
+            },
+        ],
+    },
+    {
+        path: '/login',
+        element: <Login/>,
+    }
+]
+
+export default routerOptions;
