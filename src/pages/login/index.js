@@ -1,24 +1,25 @@
-import React, {Component} from 'react';
+import React from 'react';
 import Login from '../../components/login';
 import {connect} from "react-redux";
 import {actionCreators} from "../../components/login/store";
+import { Button } from 'antd'
+import { useNavigate } from 'react-router-dom';
 
+function LoginPage(props) {
+    const navigate = useNavigate();
 
-class LoginPage extends Component {
-    render() {
-        return (
-            <div>
-                <Login></Login>
-                <p>login props: {this.props.myData}</p>
-                <button onClick={() => {this.props.getData('123456')}}>修改</button>
-                <button onClick={() => this.gotoHome()}>Go Home</button>
-            </div>
-        )
+    const gotoHome = () => {
+        navigate('/home')
     }
 
-    gotoHome() {
-        console.log(this.props);
-    }
+    return (
+        <div>
+            <Login />
+            <p>login props: {props.myData}</p>
+            <Button onClick={() => {props.getData('123456')}}>修改</Button>
+            <Button onClick={() => gotoHome()}>Go Home</Button>
+        </div>
+    )
 }
 
 const mapStateToProps = (state) => ({
@@ -31,5 +32,7 @@ const mapDispatchToProps = (dispatch) => ({
         dispatch(action)
     }
 })
+
+
 
 export default connect(mapStateToProps, mapDispatchToProps)(LoginPage)

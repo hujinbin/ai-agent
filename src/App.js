@@ -1,18 +1,12 @@
 import React from 'react'
 import {useRoutes, BrowserRouter as Router} from 'react-router-dom';
-
-import Home from './pages/home';
-import Login from './pages/login';
+import routerOptions from './router'
 
 // Styles
-import './common/styles/index.less'
+import './assets/styles/index.less'
 
 const App = () => {
-    return useRoutes([
-        {path: '/', element: <Home/>},
-        {path: '/login', element: <Login/>},
-        {path: '/home', element: <Home/>},
-    ])
+    return useRoutes(routerOptions)
 }
 
 const AppWrapper = () => {
