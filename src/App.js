@@ -1,20 +1,26 @@
-import React, { Fragment } from 'react'
+import React from 'react'
+import {useRoutes, BrowserRouter as Router} from 'react-router-dom';
+
+import Home from './pages/home';
+import Login from './pages/login';
 
 // Styles
-import './common/styles/index.css'
+import './common/styles/index.less'
 
-// 以下代码将会报错，最外层不能存在并列的标签。
-function App() {
+const App = () => {
+    return useRoutes([
+        {path: '/', element: <Home/>},
+        {path: '/login', element: <Login/>},
+        {path: '/home', element: <Home/>},
+    ])
+}
+
+const AppWrapper = () => {
     return (
-        <Fragment>
-            <div className="App">
-                <h1>This is React App.</h1>
-            </div>
-            <div className="App-other">
-                <h1>This is React App-other.</h1>
-            </div>
-        </Fragment>
+        <Router>
+            <App />
+        </Router>
     )
 }
 
-export default App
+export default AppWrapper
