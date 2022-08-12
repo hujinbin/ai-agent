@@ -1,7 +1,11 @@
-import { lazy, Suspense } from 'react';
+import React, { lazy, Suspense } from 'react';
+import { Navigate } from "react-router-dom";
+
 import Layout from '../layouts/common-layout';
 
 import Login from '../pages/login'
+import NotFound from '../pages/not-found';
+
 
 
 const Dashboard = lazy(() => import('../pages/dashboard'));
@@ -24,48 +28,63 @@ const lazyload = (children) => {
     </Suspense>
 }
 
+const isLogin = localStorage.getItem('token');
+console.log(isLogin);
+
 const routerOptions = [
     {
         path: '/',
-        element: <Layout/>,
+        element: isLogin ? <Layout/> : <Navigate to={'/login'}/>,
         children: [
             {
-                index: true,
+                path: 'dashboard',
+                name: 'dashboard',
                 element: lazyload(<Dashboard/>),
             },
             {
-                path: '/user',
+                path: 'user',
+                name: 'user',
                 element: lazyload(<User/>),
             },
             {
-                path: '/data-domain-list',
+                path: 'data-domain-list',
+                name: 'data-domain-list',
                 element: lazyload(<DomainList />)
             },
             {
-                path: '/data-interface-list',
+                path: 'data-interface-list',
+                name: 'data-interface-list',
                 element: lazyload(<InterfaceList />)
             },
             {
-                path: '/data-error-list',
+                path: 'data-error-list',
+                name: 'data-error-list',
                 element: lazyload(<ErrorList />)
             },
             {
-                path: '/alarm-list',
+                path: 'alarm-list',
+                name: 'alarm-list',
                 element: lazyload(<AlarmList />)
             },
             {
-                path: '/alarm-setting',
+                path: 'alarm-setting',
+                name: 'alarm-setting',
                 element: lazyload(<AlarmSetting />)
             },
             {
-                path: '/system-setting',
+                path: 'system-setting',
+                name: 'system-setting',
                 element: lazyload(<SystemSetting />)
             },
         ],
     },
     {
         path: '/login',
-        element: <Login/>,
+        element: isLogin ? <Navigate to={'/dashboard'} /> : <Login/>,
+    },
+    {
+        path: '*',
+        element: <NotFound/>,
     }
 ]
 

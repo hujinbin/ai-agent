@@ -35,6 +35,7 @@ const Sider = () => {
     }
 
     const handleGetOpenKeys = () => {
+        console.log(location);
         const currentPath = location.pathname.slice(1);
         return [currentPath.split('-')[0]];
     }
@@ -43,17 +44,12 @@ const Sider = () => {
         const routes = matchRoutes(routers, location.pathname);
         const pathArr = [];
         if (routes !== null) {
-            routes.forEach(item => {
-                const path = item.route.path;
-                if (path === location.pathname) {
-                    const currentPathKey = path.slice(1)
-                    const subPathName = path.slice(1).split('-')[0];
-                    pathArr.push(currentPathKey)
-                    if (!pathArr.includes(subPathName)) {
-                        pathArr.push(subPathName)
-                    }
-                }
-            })
+            const currentRoute = routes.find(item => item.pathname === location.pathname);
+            const subPathName = currentRoute.route.name.split('-')[0];
+            pathArr.push(currentRoute.route.name)
+            if (!pathArr.includes(subPathName)) {
+                pathArr.push(subPathName)
+            }
         }
         setDefaultSelectedKeys(pathArr)
         setDefaultOpenKeys(pathArr);
@@ -66,11 +62,6 @@ const Sider = () => {
     return (
         <div className={`common-layout-sider ${collapsed ? 'is-collapsed' : null}`}>
             <Logo />
-            <span
-                className={`collapsed-btn ${collapsed ? 'is-collapsed' : null}`}
-                onClick={toggleCollapsed}>
-                { collapsed ?  <MenuUnfoldOutlined  className="icon"/> : <MenuFoldOutlined  className="icon"/> }
-            </span>
             <Menu
                 openKeys={openKeys}
                 defaultSelectedKeys={defaultSelectedKeys}
@@ -83,6 +74,11 @@ const Sider = () => {
                 onSelect={handleNavigate}
                 onOpenChange={handleChangeSubMenu}
             ></Menu>
+            <span
+                className={`collapsed-btn ${collapsed ? 'is-collapsed' : null}`}
+                onClick={toggleCollapsed}>
+                { collapsed ?  <MenuUnfoldOutlined  className="icon"/> : <MenuFoldOutlined  className="icon"/> }
+            </span>
         </div>
     )
 }

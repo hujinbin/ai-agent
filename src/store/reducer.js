@@ -1,8 +1,8 @@
 import { combineReducers } from "redux-immutable";
-import { reducer as loginReducer } from '../components/login/store'
+import { reducer as globalReducer } from './global'
 
 const reducer = combineReducers({
-    login: loginReducer,
+    global: globalReducer,
 })
 
 export default reducer

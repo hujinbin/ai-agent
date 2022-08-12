@@ -1,38 +1,52 @@
 import React from 'react';
-import Login from '../../components/login';
-import {connect} from "react-redux";
-import {actionCreators} from "../../components/login/store";
-import { Button } from 'antd'
-import { useNavigate } from 'react-router-dom';
+import { Row, Col } from 'antd';
+import { withRouter } from "../../router/withRouter";
+import LoginForm from "./components/LoginForm";
+import { fetchLogin } from "../../services/loginServices";
+import { connect } from "react-redux";
+import { actionCreators } from "../../store/global";
+import './styles/index.less'
 
-function LoginPage(props) {
-    const navigate = useNavigate();
+class LoginPage extends React.Component {
 
-    const gotoHome = () => {
-        navigate('/home')
+
+    render() {
+        const onFinish = (data) => {
+            fetchLogin(data).then(res => {
+                const userLoginInfo = res.data.data;
+                Object.keys(userLoginInfo).forEach(key => {
+                    localStorage.setItem(key, JSON.stringify(userLoginInfo[key]));
+                })
+                this.props.setToken(res.data.data.token);
+                this.props.navigate('/dashboard');
+            });
+        }
+        const onFinishFailed = (data) => {
+            console.log(data);
+        }
+        return (
+            <Row className={'login-wrapper'}>
+                <Col span={6} offset={9}>
+                    <h4 className={'title'}>Monitor App</h4>
+                    <LoginForm
+                        onFinish={onFinish}
+                        onFinishFailed={onFinishFailed}
+                    />
+                </Col>
+            </Row>
+        )
     }
-
-    return (
-        <div>
-            <Login />
-            <p>login props: {props.myData}</p>
-            <Button onClick={() => {props.getData('123456')}}>修改</Button>
-            <Button onClick={() => gotoHome()}>Go Home</Button>
-        </div>
-    )
 }
 
 const mapStateToProps = (state) => ({
-    myData: state.getIn(['login', 'myData'])
+    token: state.getIn(['global', 'token'])
 })
 
 const mapDispatchToProps = (dispatch) => ({
-    getData(data) {
-        const action = actionCreators.getData(data)
-        dispatch(action)
+    setToken(data) {
+        const action = actionCreators.setToken(data)
+        dispatch(action);
     }
 })
 
-
-
-export default connect(mapStateToProps, mapDispatchToProps)(LoginPage)
+export default connect(mapStateToProps, mapDispatchToProps)(withRouter(LoginPage))
