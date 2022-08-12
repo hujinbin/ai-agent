@@ -6,6 +6,7 @@ import { withRouter } from "../../../router/withRouter";
 class LoginForm extends React.Component {
 
     render() {
+
         return (
             <Form
                 name={'form'}

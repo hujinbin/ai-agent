@@ -1,5 +1,5 @@
 import axios from 'axios';
-import { message as Message } from 'antd';
+import {message as Message} from 'antd';
 import qs from 'qs';
 
 const pendingMap = new Map();
@@ -74,6 +74,7 @@ function request (axiosConfig, customOptions) {
                 return qs.stringify(params, { arrayFormat: 'repeat' })
             }
         }
+        config.headers['token'] = localStorage.getItem('token');
         return config;
     }, error => {
         return Promise.reject(error);

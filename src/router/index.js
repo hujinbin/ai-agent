@@ -1,10 +1,11 @@
 import React, { lazy, Suspense } from 'react';
-import { Navigate } from "react-router-dom";
 
 import Layout from '../layouts/common-layout';
 
 import Login from '../pages/login'
 import NotFound from '../pages/not-found';
+
+import { RequireAuth } from "./auth";
 
 
 
@@ -22,19 +23,20 @@ const AlarmSetting = lazy(() => import('../pages/alarm/setting'));
 const SystemSetting = lazy(() => import('../pages/system/setting'));
 
 
+
 const lazyload = (children) => {
     return <Suspense fallback={<h1>Loading ...</h1>}>
         { children }
     </Suspense>
 }
 
-const isLogin = localStorage.getItem('token');
-console.log(isLogin);
 
 const routerOptions = [
     {
         path: '/',
-        element: isLogin ? <Layout/> : <Navigate to={'/login'}/>,
+        element: <RequireAuth>
+            <Layout/>
+        </RequireAuth>,
         children: [
             {
                 path: 'dashboard',
@@ -80,7 +82,7 @@ const routerOptions = [
     },
     {
         path: '/login',
-        element: isLogin ? <Navigate to={'/dashboard'} /> : <Login/>,
+        element: <Login/>,
     },
     {
         path: '*',

@@ -1,26 +1,27 @@
-import { Dropdown, Avatar, Menu } from 'antd';
-import { UserOutlined } from '@ant-design/icons'
+import {Dropdown, Avatar, Menu} from 'antd';
+import {UserOutlined} from '@ant-design/icons'
 
-const menu = (
-    <Menu
-        items={[
-            {
-                key: 'logout',
-                label: (<span>
-                    登 出
-                </span>)
-            }
-        ]}
-    ></Menu>
-)
-const HeaderDropdown = () => {
+function HeaderDropdown(props) {
     return (
         <>
             <Dropdown
-                overlay={menu}
+                overlay={
+                    <Menu
+                        items={[
+                            {
+                                key: 'logout',
+                                label: (<span>
+                    登 出
+                </span>)
+                            }
+                        ]}
+                        onClick={props.onClick}
+                    ></Menu>
+                }
                 placement="bottom"
+                on
             >
-                <Avatar icon={<UserOutlined />} />
+                <Avatar icon={<UserOutlined/>}/>
             </Dropdown>
         </>
     )

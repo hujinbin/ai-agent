@@ -1,11 +1,19 @@
-import React, { Component } from 'react';
+import React, { useState, useEffect } from 'react';
+import UserTable from "./components/userTable";
+import { fetchUserList } from "../../services/userServices";
 
-class UserList extends Component {
-    render() {
-        return (
-            <div>Userlist</div>
-        )
-    }
+function UserList(props) {
+    const [userList, setUserList] = useState([]);
+
+    useEffect(() => {
+        fetchUserList().then(res => {
+            console.log(res);
+        });
+    },[])
+
+    return (
+        <UserTable />
+    )
 }
 
 export default UserList;

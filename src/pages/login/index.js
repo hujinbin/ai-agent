@@ -6,36 +6,35 @@ import { fetchLogin } from "../../services/loginServices";
 import { connect } from "react-redux";
 import { actionCreators } from "../../store/global";
 import './styles/index.less'
+import Auth from "../../router/auth";
 
-class LoginPage extends React.Component {
-
-
-    render() {
-        const onFinish = (data) => {
-            fetchLogin(data).then(res => {
-                const userLoginInfo = res.data.data;
-                Object.keys(userLoginInfo).forEach(key => {
-                    localStorage.setItem(key, JSON.stringify(userLoginInfo[key]));
-                })
-                this.props.setToken(res.data.data.token);
-                this.props.navigate('/dashboard');
-            });
-        }
-        const onFinishFailed = (data) => {
-            console.log(data);
-        }
-        return (
-            <Row className={'login-wrapper'}>
-                <Col span={6} offset={9}>
-                    <h4 className={'title'}>Monitor App</h4>
-                    <LoginForm
-                        onFinish={onFinish}
-                        onFinishFailed={onFinishFailed}
-                    />
-                </Col>
-            </Row>
-        )
+function LoginPage(props) {
+    const { login } = Auth();
+    const onFinish = (data) => {
+        fetchLogin(data).then(res => {
+            const userLoginInfo = res.data.data;
+            Object.keys(userLoginInfo).forEach(key => {
+                localStorage.setItem(key, userLoginInfo[key]);
+            })
+            props.setToken(res.data.data.token);
+            login(res.data.data.token);
+            props.navigate('/dashboard');
+        });
     }
+    const onFinishFailed = (data) => {
+        console.log(data);
+    }
+    return (
+        <Row className={'login-wrapper'}>
+            <Col span={6} offset={9}>
+                <h4 className={'title'}>Monitor App</h4>
+                <LoginForm
+                    onFinish={onFinish}
+                    onFinishFailed={onFinishFailed}
+                />
+            </Col>
+        </Row>
+    )
 }
 
 const mapStateToProps = (state) => ({
