@@ -45,9 +45,9 @@ const Sider = () => {
         const pathArr = [];
         if (routes !== null) {
             const currentRoute = routes.find(item => item.pathname === location.pathname);
-            const subPathName = currentRoute.route.name.split('-')[0];
+            const subPathName = currentRoute.route.name ? currentRoute.route.name.split('-')[0] : null;
             pathArr.push(currentRoute.route.name)
-            if (!pathArr.includes(subPathName)) {
+            if (subPathName && !pathArr.includes(subPathName)) {
                 pathArr.push(subPathName)
             }
         }

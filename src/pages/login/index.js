@@ -21,16 +21,12 @@ function LoginPage(props) {
             props.navigate('/dashboard');
         });
     }
-    const onFinishFailed = (data) => {
-        console.log(data);
-    }
     return (
         <Row className={'login-wrapper'}>
             <Col span={6} offset={9}>
                 <h4 className={'title'}>Monitor App</h4>
                 <LoginForm
                     onFinish={onFinish}
-                    onFinishFailed={onFinishFailed}
                 />
             </Col>
         </Row>

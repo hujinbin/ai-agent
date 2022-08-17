@@ -74,16 +74,20 @@ function request (axiosConfig, customOptions) {
                 return qs.stringify(params, { arrayFormat: 'repeat' })
             }
         }
-        config.headers['token'] = localStorage.getItem('token');
+        config.headers['Authentication'] = localStorage.getItem('token');
         return config;
     }, error => {
         return Promise.reject(error);
     })
 
     instance.interceptors.response.use(response => {
+        if (response.data.code !== 200) {
+            Message.error(response.data.msg);
+        }
         removePending(response.config);
         return response;
     }, error => {
+        console.log(error);
         custom_options.error_message_show && httpErrorStatusHandle(error);
         error.config && removePending(error.config);
         return Promise.reject(error);
