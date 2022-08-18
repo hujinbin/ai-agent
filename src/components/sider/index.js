@@ -46,7 +46,7 @@ const Sider = () => {
         if (routes !== null) {
             const currentRoute = routes.find(item => item.pathname === location.pathname);
             const subPathName = currentRoute.route.name ? currentRoute.route.name.split('-')[0] : null;
-            pathArr.push(currentRoute.route.name)
+            pathArr.push(currentRoute.route.name || 'dashboard') // TODO 默认为/的时候，重定向后无法高亮
             if (subPathName && !pathArr.includes(subPathName)) {
                 pathArr.push(subPathName)
             }

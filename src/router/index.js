@@ -1,11 +1,14 @@
 import React, { lazy, Suspense } from 'react';
+import { Spin } from 'antd';
 
 import Layout from '../layouts/common-layout';
 
 import Login from '../pages/login'
+import Register from '../pages/register'
 import NotFound from '../pages/not-found';
 
 import { RequireAuth } from "./auth";
+import {Navigate} from "react-router-dom";
 
 
 
@@ -23,7 +26,15 @@ const SystemSetting = lazy(() => import('../pages/system/setting'));
 
 
 const lazyload = (children) => {
-    return <Suspense fallback={<h1>Loading ...</h1>}>
+    return <Suspense fallback={<div style={{
+        display: 'flex',
+        justifyContent: 'center',
+        alignItems: 'center',
+        width: '100%',
+        height: '100%'
+    }}>
+        <Spin/>
+    </div>}>
         { children }
     </Suspense>
 }
@@ -36,6 +47,10 @@ const routerOptions = [
             <Layout/>
         </RequireAuth>,
         children: [
+            {
+                index: true,
+                element: <Navigate to={'/dashboard'}/>
+            },
             {
                 path: 'dashboard',
                 name: 'dashboard',
@@ -71,6 +86,10 @@ const routerOptions = [
     {
         path: '/login',
         element: <Login/>,
+    },
+    {
+        path: '/register',
+        element: <Register/>,
     },
     {
         path: '*',

@@ -13,7 +13,7 @@ function HeaderDomainList(props) {
     const handleChangeDomain = (value) => {
         props.setCurrentDomain(value);
         setTimeout(() => {
-            window.reload();
+            window.location.reload();
         }, 500)
     }
 
@@ -22,8 +22,10 @@ function HeaderDomainList(props) {
             fetchDomainList().then(res => {
                 const list = res.data.data.list || [];
                 props.setDomainList(list);
-                if (list.length > 0) {
+                if (!localStorage.getItem('currentDomain') && list.length > 0) {
                     props.setCurrentDomain(list[0].Id)
+                } else {
+                    props.setCurrentDomain(localStorage.getItem('currentDomain'))
                 }
             })
         }
@@ -38,7 +40,7 @@ function HeaderDomainList(props) {
         >
             {
                 props.domainList.map((domain, index) => (
-                    <Option key={index} value={domain.Id}>{ domain.Domain }</Option>
+                    <Option key={index} value={String(domain.Id)}>{ domain.Domain }</Option>
             )   )
             }
         </Select>
