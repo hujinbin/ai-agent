@@ -9,10 +9,10 @@ const rulesObj = {
         pattern('phone')
     ],
     Secret: [
-        { required: true, message: '请填写密钥' }
+        { required: true, message: '请填写Secret' }
     ],
     AccessToken: [
-        { required: true, message: '请填写Token' }
+        { required: true, message: '请填写AccessToken' }
     ],
 }
 
@@ -59,10 +59,10 @@ function alarmEditModal(props) {
                 <Form.Item label={'电话'} name={'Phone'} rules={rulesObj.Phone}>
                     <Input/>
                 </Form.Item>
-                <Form.Item label={'密钥'} name={'Secret'} rules={rulesObj.Secret}>
+                <Form.Item label={'Secret'} name={'Secret'} rules={rulesObj.Secret}>
                     <TextArea/>
                 </Form.Item>
-                <Form.Item label={'Token'} name={'AccessToken'} rules={rulesObj.AccessToken}>
+                <Form.Item label={'AccessToken'} name={'AccessToken'} rules={rulesObj.AccessToken}>
                     <TextArea/>
                 </Form.Item>
                 <Form.Item

@@ -72,8 +72,8 @@ function AlarmSetting() {
                 <Item label={'告警状态'}>{alarmInfo.OpenAlarm ? <CheckCircleFilled style={{ color: 'green' }}/> : <CloseCircleFilled style={{ color: 'red' }}/>}</Item>
                 <Item label={'是否通知所有人'}> {alarmInfo.AtAll ? '是' : '否'}</Item>
                 <Item label={'联系电话'}>{alarmInfo.Phone || '-'}</Item>
-                <Item label={'密钥'}>{alarmInfo.Secret || '-'}</Item>
-                <Item label={'Token'}>{alarmInfo.AccessToken || '-'}</Item>
+                <Item label={'Secret'}>{alarmInfo.Secret || '-'}</Item>
+                <Item label={'AccessToken'}>{alarmInfo.AccessToken || '-'}</Item>
             </Descriptions>
 
             <AlarmEditModal
