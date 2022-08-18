@@ -16,7 +16,6 @@ const setDomainList = (state, action) => {
 }
 
 const setCurrentDomain = (state, action) => {
-    console.log(action, 'action');
     localStorage.setItem('currentDomain', action.data)
     return state.set('currentDomain', action.data);
 }

@@ -38,10 +38,6 @@ const menus = [
         label: '告警管理',
         children: [
             {
-                key: 'alarm-list',
-                label: '告警列表'
-            },
-            {
                 key: 'alarm-setting',
                 label: '告警设置'
             },

@@ -16,7 +16,6 @@ const User = lazy(() => import('../pages/user'));
 const InterfaceList = lazy(() => import('../pages/data/interface'));
 const ErrorList = lazy(() => import('../pages/data/error'));
 
-const AlarmList = lazy(() => import('../pages/alarm/list'));
 const AlarmSetting = lazy(() => import('../pages/alarm/setting'));
 
 const SystemSetting = lazy(() => import('../pages/system/setting'));
@@ -56,11 +55,6 @@ const routerOptions = [
                 path: 'data-error-list',
                 name: 'data-error-list',
                 element: lazyload(<ErrorList />)
-            },
-            {
-                path: 'alarm-list',
-                name: 'alarm-list',
-                element: lazyload(<AlarmList />)
             },
             {
                 path: 'alarm-setting',
