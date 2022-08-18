@@ -23,10 +23,6 @@ const menus = [
         label: '数据管理',
         children: [
             {
-                key: 'data-domain-list',
-                label: '域名列表'
-            },
-            {
                 key: 'data-interface-list',
                 label: '接口列表'
             },

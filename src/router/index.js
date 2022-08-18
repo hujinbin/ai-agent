@@ -13,7 +13,6 @@ const Dashboard = lazy(() => import('../pages/dashboard'));
 
 const User = lazy(() => import('../pages/user'));
 
-const DomainList = lazy(() => import('../pages/data/domain'));
 const InterfaceList = lazy(() => import('../pages/data/interface'));
 const ErrorList = lazy(() => import('../pages/data/error'));
 
@@ -47,11 +46,6 @@ const routerOptions = [
                 path: 'user',
                 name: 'user',
                 element: lazyload(<User/>),
-            },
-            {
-                path: 'data-domain-list',
-                name: 'data-domain-list',
-                element: lazyload(<DomainList />)
             },
             {
                 path: 'data-interface-list',

@@ -6,11 +6,11 @@ import pattern from "../../../utils/validator";
 const rulesObj = {
     username: [
         { required: true, message: '请输入用户名' },
-        pattern('username')
+        // pattern('username')
     ],
     password: [
         { required: true, message: '请输入密码' },
-        pattern('password')
+        // pattern('password')
     ],
 }
 

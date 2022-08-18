@@ -1,5 +1,6 @@
-import React, { Component } from "react";
+import React from "react";
 import HeaderDropdown from "./components/headerDropdown";
+import HeaderDomainList from "./components/headerDomainList";
 import Auth from '../../router/auth';
 import { useNavigate } from "react-router-dom";
 import './index.less';
@@ -20,6 +21,7 @@ function Header() {
     }
     return (
         <div className="header-wrapper">
+            <HeaderDomainList/>
             <HeaderDropdown
                 className="header-wrapper-right"
                 onClick={onClick}
