@@ -58,7 +58,7 @@ function AlarmSetting() {
                     padding: 20,
                 }}
                 labelStyle={{
-                    width: 130
+                    width: 140
                 }}
                 extra={
                     <Button
