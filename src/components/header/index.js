@@ -1,6 +1,7 @@
-import React from "react";
-import HeaderDropdown from "./components/headerDropdown";
-import HeaderDomainList from "./components/headerDomainList";
+import React, {useState} from "react";
+import HeaderDropdown from "./components/HeaderDropdown";
+import HeaderDomainList from "./components/HeaderDomainList";
+import ChangePwdModal from "./components/ChangePwdModal";
 import Auth from '../../router/auth';
 import { useNavigate } from "react-router-dom";
 import './index.less';
@@ -8,24 +9,23 @@ import './index.less';
 function Header() {
     const { logout } = Auth();
     const navigate = useNavigate();
-    const onClick = (event) => {
-        const { key } = event;
-        switch (key) {
-            case 'logout':
-                logout();
-                navigate('/login');
-                break;
-            default:
-                break;
-        }
+    const [visible, setVisible] = useState(false);
+    const handleLogout = () => {
+        logout();
+        navigate('/login');
+    }
+    const handleChangePwd = () => {
+        setVisible(true);
     }
     return (
         <div className="header-wrapper">
             <HeaderDomainList/>
             <HeaderDropdown
                 className="header-wrapper-right"
-                onClick={onClick}
+                handleLogout={handleLogout}
+                handleChangePwd={handleChangePwd}
             />
+            <ChangePwdModal visible={visible} setVisible={setVisible}/>
         </div>
     )
 }
