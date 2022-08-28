@@ -9,6 +9,7 @@ import routers from '../../router';
 const Sider = () => {
     const navigate = useNavigate();
     const location = useLocation();
+    const [menuList, setMenuList] = useState([]);
     const [defaultSelectedKeys, setDefaultSelectedKeys] = useState([]);
     const [defaultOpenKeys, setDefaultOpenKeys] = useState([]);
     const [openKeys, setOpenKeys] = useState([]);
@@ -40,14 +41,22 @@ const Sider = () => {
         return [currentPath.split('-')[0]];
     }
 
+    const handleGetAuthedMenu = () => {
+        const role = +localStorage.getItem('role');
+        return menus.filter(item =>
+            item.role.includes(role)
+        )
+    }
+
     useEffect(() => {
+        setMenuList(handleGetAuthedMenu());
         const routes = matchRoutes(routers, location.pathname);
         const pathArr = [];
         if (routes !== null) {
             const currentRoute = routes.find(item => item.pathname === location.pathname);
-            const subPathName = currentRoute.route.name.split('-')[0];
-            pathArr.push(currentRoute.route.name)
-            if (!pathArr.includes(subPathName)) {
+            const subPathName = currentRoute.route.name ? currentRoute.route.name.split('-')[0] : null;
+            pathArr.push(currentRoute.route.name || 'dashboard') // TODO 默认为/的时候，重定向后无法高亮
+            if (subPathName && !pathArr.includes(subPathName)) {
                 pathArr.push(subPathName)
             }
         }
@@ -69,7 +78,7 @@ const Sider = () => {
                 mode="inline"
                 theme="light"
                 inlineCollapsed={collapsed}
-                items={menus}
+                items={menuList}
                 className={'menu-list'}
                 onSelect={handleNavigate}
                 onOpenChange={handleChangeSubMenu}
