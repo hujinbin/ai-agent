@@ -16,8 +16,10 @@ const Dashboard = lazy(() => import('../pages/dashboard'));
 
 const User = lazy(() => import('../pages/user'));
 
-const InterfaceList = lazy(() => import('../pages/data/interface'));
-const ErrorList = lazy(() => import('../pages/data/error'));
+const PageErrorList = lazy(() => import('../pages/data/page-error'));
+const InterfaceErrorList = lazy(() => import('../pages/data/interface-error'));
+const StableList = lazy(() => import('../pages/data/stable'));
+const PerformanceList = lazy(() => import('../pages/data/performance'));
 
 const AlarmSetting = lazy(() => import('../pages/alarm/setting'));
 
@@ -62,14 +64,24 @@ const routerOptions = [
                 element: lazyload(<User/>),
             },
             {
-                path: 'data-interface-list',
-                name: 'data-interface-list',
-                element: lazyload(<InterfaceList />)
+                path: 'data-interface-error-list',
+                name: 'data-interface-error-list',
+                element: lazyload(<InterfaceErrorList />)
             },
             {
-                path: 'data-error-list',
-                name: 'data-error-list',
-                element: lazyload(<ErrorList />)
+                path: 'data-page-stable-list',
+                name: 'data-page-stable-list',
+                element: lazyload(<StableList />)
+            },
+            {
+                path: 'data-performance-list',
+                name: 'data-performance-list',
+                element: lazyload(<PerformanceList />)
+            },
+            {
+                path: 'data-page-error-list',
+                name: 'data-page-error-list',
+                element: lazyload(<PageErrorList />)
             },
             {
                 path: 'alarm-setting',

@@ -26,12 +26,20 @@ const menus = [
         role: [0, 100],
         children: [
             {
-                key: 'data-interface-list',
-                label: '接口列表',
+                key: 'data-interface-error-list',
+                label: '接口报错数据',
             },
             {
-                key: 'data-error-list',
-                label: '报错汇总',
+                key: 'data-performance-list',
+                label: '接口性能数据',
+            },
+            {
+                key: 'data-page-stable-list',
+                label: '页面稳定数据',
+            },
+            {
+                key: 'data-page-error-list',
+                label: '页面错误数据',
             }
         ]
     },
