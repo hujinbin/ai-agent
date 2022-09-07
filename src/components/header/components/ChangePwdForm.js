@@ -1,5 +1,5 @@
 import pattern from "../../../utils/validator";
-import {Button, Col, Form, Input, Row} from "antd";
+import {Button, Form, Input,} from "antd";
 import {LockOutlined} from "@ant-design/icons";
 
 const rulesObj = {

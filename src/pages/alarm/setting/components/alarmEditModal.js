@@ -40,6 +40,7 @@ function alarmEditModal(props) {
             visible={isModalVisible}
             destroyOnClose={true}
             footer={null}
+            onCancel={onCancel}
         >
             <Form
                 name={'alarm-form'}
