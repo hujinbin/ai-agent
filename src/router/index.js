@@ -25,6 +25,8 @@ const AlarmSetting = lazy(() => import('../pages/alarm/setting'));
 
 const SystemSetting = lazy(() => import('../pages/system/setting'));
 
+const AccessKey = lazy(() => import('../pages/access-way'));
+
 
 
 const lazyload = (children) => {
@@ -92,6 +94,11 @@ const routerOptions = [
                 path: 'system-setting',
                 name: 'system-setting',
                 element: lazyload(<SystemSetting />)
+            },
+            {
+                path: 'access',
+                name: 'access',
+                element: lazyload(<AccessKey />)
             },
         ],
     },

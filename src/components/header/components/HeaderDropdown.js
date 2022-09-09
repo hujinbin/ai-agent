@@ -8,7 +8,6 @@ function HeaderDropdown(props) {
     const [userInfo, setUserInfo] = useState({});
     useEffect(() => {
         fetchUserInfo().then(res => {
-            console.log(res);
             setUserInfo(res.data.data);
         })
     }, [])

@@ -4,6 +4,7 @@ import {
     SnippetsOutlined,
     AlertOutlined,
     SettingOutlined,
+    ApiOutlined
 } from '@ant-design/icons';
 
 const menus = [
@@ -66,6 +67,12 @@ const menus = [
                 label: '系统设置',
             },
         ]
+    },
+    {
+        key: 'access',
+        icon: <ApiOutlined/>,
+        label: '接入方式',
+        role: [0, 100],
     },
 ]
 

@@ -34,6 +34,7 @@ function DefaultTable(props) {
 
     useEffect(() => {
         handleSearchList()
+        // eslint-disable-next-line react-hooks/exhaustive-deps
     }, []);
 
     return (

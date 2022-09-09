@@ -15,7 +15,6 @@ function RegisterIndex() {
             code
         }
         fetchUserRegister(params).then(async res => {
-            console.log(res);
             if (res.data.code === 200) {
                 message.success('注册成功!');
                 navigate('/login');
