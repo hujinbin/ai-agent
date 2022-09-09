@@ -1,7 +1,18 @@
+import {fetchNetworkStabilityList} from '../../../services/dataServices';
+import DefaultTable from "../../../components/default-table";
+
 function DataPerformance() {
+    const columns = [];
+
     return (
-        <div>DataPerformance</div>
+        <DefaultTable
+            columns={columns}
+            request={fetchNetworkStabilityList}
+        >
+
+        </DefaultTable>
     )
 }
+
 
 export default DataPerformance;

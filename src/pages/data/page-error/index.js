@@ -1,6 +1,16 @@
+import DefaultTable from "../../../components/default-table";
+import {fetchWebErrorList} from "../../../services/dataServices";
+
 function PageError() {
+    const columns = [];
+
     return (
-        <div>PageError</div>
+        <DefaultTable
+            columns={columns}
+            request={fetchWebErrorList}
+        >
+
+        </DefaultTable>
     )
 }
 

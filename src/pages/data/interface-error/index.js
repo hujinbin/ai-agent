@@ -1,6 +1,16 @@
+import DefaultTable from "../../../components/default-table";
+import {fetchNetworkErrorList} from "../../../services/dataServices";
+
 function InterfaceError() {
+    const columns = [];
+
     return (
-        <div>InterfaceError</div>
+        <DefaultTable
+            columns={columns}
+            request={fetchNetworkErrorList}
+        >
+
+        </DefaultTable>
     )
 }
 

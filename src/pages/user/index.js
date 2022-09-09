@@ -1,16 +1,10 @@
-import { useEffect, useState} from 'react';
-import {Table} from "antd";
 import { fetchUserList } from "../../services/userServices";
 import moment from 'moment'
+import DefaultTable from "../../components/default-table";
 
 
 function UserIndex() {
-    const [tableDataSource, setTableDataSource] = useState([]);
-    const [tableLoading, setTableLoading] = useState(false);
-    const [pageSize, setPageSize] = useState(10);
-    const [pageNum, setPageNum] = useState(1);
-    const [total, setTotal] = useState(0);
-    const [columns] = useState([
+    const columns = [
         {
             title: '用户ID',
             dataIndex: 'Id',
@@ -38,44 +32,15 @@ function UserIndex() {
             key: 'RegTime',
             render: time => <span>{ moment(time * 1000).format('YYYY-MM-DD HH:mm:ss') }</span>
         },
-    ])
+    ];
 
-    const handleChangePageOptions = (pageNum, pageSize) => {
-        setPageNum(pageNum);
-        setPageSize(pageSize);
-        handleSearchList();
-    }
-
-    const handleSearchList = () => {
-        const params = {
-            pageSize,
-            pageNum
-        };
-        setTableLoading(true);
-        fetchUserList(params).then(res => {
-            console.log(res);
-            setTableDataSource(res.data.data.list || []);
-            setTotal(0);
-        }).finally(() => {
-            setTableLoading(false);
-        })
-    }
-
-    useEffect(() => {
-        handleSearchList();
-    }, []);
     return (
-        <Table
-            loading={tableLoading}
-            dataSource={tableDataSource}
+        <DefaultTable
             columns={columns}
-            pagination={{
-                current: pageNum,
-                pageSize: pageSize,
-                total: total,
-                onChange: (pageNum, pageSize) => handleChangePageOptions(pageNum, pageSize)
-            }}
-        ></Table>
+            request={fetchUserList}
+        >
+
+        </DefaultTable>
     )
 }
 

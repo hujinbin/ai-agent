@@ -9,7 +9,7 @@ export function fetchDomainList(params) {
 }
 
 // 获取接口报错列表
-export function getNetworkErrorList(params) {
+export function fetchNetworkErrorList(params) {
     return request({
         url: "/report/networkErrorList",
         method: "GET",
@@ -18,7 +18,7 @@ export function getNetworkErrorList(params) {
 }
 
 // 获取接口稳定性能列表
-export function getNetworkStabilityList(params) {
+export function fetchNetworkStabilityList(params) {
     return request({
         url: "/report/networkStabilityList",
         method: "GET",
@@ -27,7 +27,7 @@ export function getNetworkStabilityList(params) {
 }
 
 // 获取网站稳定性 (长加载和长任务) 列表
-export function getWebStabilityList(params) {
+export function fetchWebStabilityList(params) {
     return request({
         url: "/report/webStabilityList",
         method: "GET",
@@ -36,7 +36,7 @@ export function getWebStabilityList(params) {
 }
 
 // 获取网站代码报错列表
-export function getWebErrorList(params) {
+export function fetchWebErrorList(params) {
     return request({
         url: "/report/webErrorList",
         method: "GET",
