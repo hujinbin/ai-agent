@@ -2,7 +2,9 @@ import { fetchWebStabilityList } from '../../../services/dataServices';
 import DefaultTable from "../../../components/default-table";
 
 function DataStable() {
-    const columns = [];
+    const columns = [
+
+    ];
 
     return (
         <DefaultTable
