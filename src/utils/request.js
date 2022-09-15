@@ -81,6 +81,7 @@ function request (axiosConfig, customOptions) {
     })
 
     instance.interceptors.response.use(response => {
+        console.log(response);
         if (response.data.code !== 200) {
             Message.error(response.data.msg);
         }
