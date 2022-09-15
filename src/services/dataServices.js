@@ -1,5 +1,7 @@
 import request from "../utils/request";
 
+const DomainId = localStorage.getItem('currentDomain') || '';
+
 export function fetchDomainList(params) {
     return request({
         url: '/domain/list',
@@ -13,7 +15,10 @@ export function fetchNetworkErrorList(params) {
     return request({
         url: "/report/networkErrorList",
         method: "GET",
-        params,
+        params: {
+            ...params,
+            DomainId,
+        }
     });
 }
 
@@ -22,7 +27,10 @@ export function fetchNetworkStabilityList(params) {
     return request({
         url: "/report/networkStabilityList",
         method: "GET",
-        params,
+        params: {
+            ...params,
+            DomainId,
+        }
     });
 }
 
@@ -31,7 +39,10 @@ export function fetchWebStabilityList(params) {
     return request({
         url: "/report/webStabilityList",
         method: "GET",
-        params,
+        params: {
+            ...params,
+            DomainId,
+        }
     });
 }
 
@@ -40,6 +51,9 @@ export function fetchWebErrorList(params) {
     return request({
         url: "/report/webErrorList",
         method: "GET",
-        params,
+        params: {
+            ...params,
+            DomainId,
+        }
     });
 }
