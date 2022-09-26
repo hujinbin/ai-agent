@@ -5,7 +5,6 @@ const { TextArea } = Input;
 
 const rulesObj = {
     Phone: [
-        { required: true, message: '请填写手机号' },
         pattern('phone')
     ],
     Secret: [
