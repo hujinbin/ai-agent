@@ -1,7 +1,9 @@
 import axios from 'axios';
 import {message as Message} from 'antd';
 import qs from 'qs';
+import Auth from '../router/auth';
 
+const { logout } = Auth;
 const pendingMap = new Map();
 
 function getPendingKey(config) {
@@ -83,6 +85,11 @@ function request (axiosConfig, customOptions) {
     instance.interceptors.response.use(response => {
         console.log(response);
         if (response.data.code !== 200) {
+            if (response.data.code === 401) {
+                localStorage.clear();
+                window.location.href = '/login';
+                return;
+            }
             Message.error(response.data.msg);
         }
         removePending(response.config);
