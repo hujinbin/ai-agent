@@ -12,9 +12,10 @@ function DataStable() {
     const [total, setTotal] = useState(0);
 
     const handleSearchList = () => {
+        console.log(current);
         const params = {
             pageSize: PAGE_SIZE,
-            pageNum: current,
+            page: current,
         }
         fetchWebStabilityList(params).then(res => {
             setTableList(res.data.data.list || []);
@@ -24,13 +25,12 @@ function DataStable() {
 
     const onChange = (page) => {
         setCurrent(page);
-        handleSearchList();
     }
 
     useEffect(() => {
         handleSearchList();
-        // eslint-disable-next-line react-hooks/exhaustive-deps
-    }, []);
+    }, [current])
+
 
     return (
         <>

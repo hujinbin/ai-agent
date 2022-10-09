@@ -9,11 +9,11 @@ function DefaultTable(props) {
     const [tableDataSource, setTableDataSource] = useState([]);
     const [tableLoading, setTableLoading] = useState(false);
     const [pageSize, setPageSize] = useState(10);
-    const [pageNum, setPageNum] = useState(1);
+    const [page, setPage] = useState(1);
     const [total, setTotal] = useState(0);
 
-    const handleChangePageOptions = (pageNum, pageSize) => {
-        setPageNum(pageNum);
+    const handleChangePageOptions = (page, pageSize) => {
+        setPage(page);
         setPageSize(pageSize);
         handleSearchList();
     }
@@ -21,7 +21,7 @@ function DefaultTable(props) {
     const handleSearchList = () => {
         const params = {
             pageSize,
-            pageNum
+            page
         };
         setTableLoading(true);
         request(params).then(res => {
@@ -44,7 +44,7 @@ function DefaultTable(props) {
             columns={columns}
             rowKey={record => record.Id}
             pagination={{
-                current: pageNum,
+                current: page,
                 pageSize: pageSize,
                 total: total,
                 onChange: (pageNum, pageSize) => handleChangePageOptions(pageNum, pageSize)
