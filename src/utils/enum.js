@@ -18,7 +18,10 @@ export default class Enum {
     }
 
     getName(value) {
-        return this._props[value].name;
+        if (value) {
+            return this._props[value].name;
+        }
+        return '-'
     }
 
     getList() {

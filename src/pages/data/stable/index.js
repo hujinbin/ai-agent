@@ -4,6 +4,8 @@ import StableCard from "./components/stableCard";
 import './styles/index.less';
 import {useEffect, useState} from "react";
 
+const PAGE_SIZE = 8;
+
 function DataStable() {
     const [current, setCurrent] = useState(1);
     const [tableList, setTableList] = useState([]);
@@ -11,7 +13,7 @@ function DataStable() {
 
     const handleSearchList = () => {
         const params = {
-            pageSize: 12,
+            pageSize: PAGE_SIZE,
             pageNum: current,
         }
         fetchWebStabilityList(params).then(res => {
@@ -42,11 +44,12 @@ function DataStable() {
                 </Row>
 
                 <Pagination
-                    pageSize={12}
+                    className={'stable-pagination'}
+                    pageSize={PAGE_SIZE}
                     current={current}
                     total={total}
                     defaultCurrent={1}
-                    defaultPageSize={12}
+                    defaultPageSize={PAGE_SIZE}
                     onChange={onChange}
                 />
             </> : <div className={'empty-wrapper'}>

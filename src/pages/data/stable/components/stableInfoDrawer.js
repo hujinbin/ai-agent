@@ -11,28 +11,8 @@ function StableInfoDrawer(props) {
         data,
     } = props;
 
-    return (
-        <Drawer
-            title={'详情'}
-            placement={'right'}
-            visible={drawerVisible}
-            onClose={onClose}
-        >
-            <p className={'drawer-content-item'}>
-                <span className={'label'}>XPath路径：</span>
-                <CopyToClipboard
-                    text={data.Selector}
-                    onSuccess={() => {
-                        message.success('复制成功！');
-                    }}
-                >
-                    <CopyOutlined className={'markdown-copy-icon'}/>
-                </CopyToClipboard>
-            </p>
-            <p className={'drawer-content-item'}>
-                <span className={'label'}>类型：</span>
-                <span className={'content'}>{STABLE_PAGE_TYPE.getName(data.Kind)}</span>
-            </p>
+    const payloadWrapper = () => (
+        <>
             <p className={'drawer-content-item'}>
                 <span className={'label'}>TTFB：</span>
                 <span className={'content'}>{timeConsumingFormatter(data.TtfbTime)}</span>
@@ -57,6 +37,15 @@ function StableInfoDrawer(props) {
                 <span className={'label'}>首次可交互时间：</span>
                 <span className={'content'}>{timeConsumingFormatter(data.TimeToInteractive)}</span>
             </p>
+        </>
+    );
+
+    const commonWrapper = () => (
+        <>
+            <p className={'drawer-content-item'}>
+                <span className={'label'}>事件类型：</span>
+                <span className={'content'}>{data.EventType}</span>
+            </p>
             <p className={'drawer-content-item'}>
                 <span className={'label'}>页面完整加载时间：</span>
                 <span className={'content'}>{timeConsumingFormatter(data.LoadTime)}</span>
@@ -65,6 +54,11 @@ function StableInfoDrawer(props) {
                 <span className={'label'}>持续时间：</span>
                 <span className={'content'}>{timeConsumingFormatter(data.Duration)}</span>
             </p>
+        </>
+    );
+
+    const memoryWrapper = () => (
+        <>
             <p className={'drawer-content-item'}>
                 <span className={'label'}>内存大小限制：</span>
                 <span className={'content'}>{fileLengthFormat(data.JsHeapSizeLimit)}</span>
@@ -81,6 +75,36 @@ function StableInfoDrawer(props) {
                 <span className={'label'}>内存使用率：</span>
                 <span className={'content'}>{calPercent(data.UsedJSHeapSize, data.TotalJSHeapSize)}</span>
             </p>
+        </>
+    )
+
+    return (
+        <Drawer
+            title={'详情'}
+            placement={'right'}
+            visible={drawerVisible}
+            onClose={onClose}
+        >
+            <p className={'drawer-content-item'}>
+                <span className={'label'}>XPath路径：</span>
+                <CopyToClipboard
+                    text={data.Selector}
+                    onSuccess={() => {
+                        message.success('复制成功！');
+                    }}
+                >
+                    <CopyOutlined className={'markdown-copy-icon'}/>
+                </CopyToClipboard>
+            </p>
+            <p className={'drawer-content-item'}>
+                <span className={'label'}>类型：</span>
+                <span className={'content'}>{STABLE_PAGE_TYPE.getName(data.Kind)}</span>
+            </p>
+
+            {data.Kind === 'payload' ? payloadWrapper() : null}
+            {['longtask', 'resource', 'draw'].includes(data.Kind) ? commonWrapper() : null}
+            {data.Kind === 'memory' ? memoryWrapper() : null}
+
         </Drawer>
     )
 }
