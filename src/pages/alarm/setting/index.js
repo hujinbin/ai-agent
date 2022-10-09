@@ -22,7 +22,6 @@ function AlarmSetting() {
     }
 
     const handleOnFinish = (data) => {
-        console.log(data, 'data');
         setSubmitBtnLoading(true);
         fetchSetAlarm(data).then(() => {
             message.success('告警设置修改成功！')

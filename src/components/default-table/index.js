@@ -42,6 +42,7 @@ function DefaultTable(props) {
             loading={tableLoading}
             dataSource={tableDataSource}
             columns={columns}
+            rowKey={record => record.Id}
             pagination={{
                 current: pageNum,
                 pageSize: pageSize,

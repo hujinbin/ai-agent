@@ -47,6 +47,18 @@ export function fetchWebStabilityList(params) {
 }
 
 // 获取网站代码报错列表
+export function fetchWebStabilityEnum(params) {
+    return request({
+        url: "/report/webErrorList",
+        method: "GET",
+        params: {
+            ...params,
+            DomainId,
+        }
+    });
+}
+
+// 获取网站代码报错列表
 export function fetchWebErrorList(params) {
     return request({
         url: "/report/webErrorList",

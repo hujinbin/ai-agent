@@ -6,27 +6,32 @@ function DataPerformance() {
         {
             title: 'ID',
             dataIndex: 'Id',
+            key: 'Id',
         },
         {
             title: '类别',
             dataIndex: 'Kind',
+            key: 'Kind',
         },
         {
             title: '事件类型',
             dataIndex: 'EventType',
+            key: 'EventType',
         },
         {
             title: 'URL',
-            dataIndex: 'Pathname'
+            dataIndex: 'Pathname',
+            key: 'Pathname'
         },
         {
             title: '接口状态',
-            dataIndex: 'Status',
-            render: ({ record }) => <span>{ record.Status }({ record.StatusText })</span>
+            key: 'Status',
+            render: (record) => <span>{ record.Status }({ record.StatusText || '-' })</span>
         },
         {
             title: '接口耗时',
-            dataIndex: 'Duration'
+            dataIndex: 'Duration',
+            key: 'Duration'
         }
     ];
 
