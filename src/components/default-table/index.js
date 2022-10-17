@@ -15,7 +15,6 @@ function DefaultTable(props) {
     const handleChangePageOptions = (page, pageSize) => {
         setPage(page);
         setPageSize(pageSize);
-        handleSearchList();
     }
 
     const handleSearchList = () => {
@@ -34,8 +33,7 @@ function DefaultTable(props) {
 
     useEffect(() => {
         handleSearchList()
-        // eslint-disable-next-line react-hooks/exhaustive-deps
-    }, []);
+    }, [page])
 
     return (
         <Table
@@ -43,6 +41,7 @@ function DefaultTable(props) {
             dataSource={tableDataSource}
             columns={columns}
             rowKey={record => record.Id}
+            scroll={{x: '100%'}}
             pagination={{
                 current: page,
                 pageSize: pageSize,
