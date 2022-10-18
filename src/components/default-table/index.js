@@ -4,7 +4,8 @@ import {Table} from "antd";
 function DefaultTable(props) {
     const {
         columns,
-        request
+        request,
+        tableOptions = {},
     } = props;
     const [tableDataSource, setTableDataSource] = useState([]);
     const [tableLoading, setTableLoading] = useState(false);
@@ -54,6 +55,7 @@ function DefaultTable(props) {
                 total: total,
                 onChange: (pageNum, pageSize) => handleChangePageOptions(pageNum, pageSize)
             }}
+            {  ...tableOptions }
         >
 
         </Table>

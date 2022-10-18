@@ -29,6 +29,7 @@ function DataStable() {
 
     useEffect(() => {
         handleSearchList();
+        // eslint-disable-next-line
     }, [current])
 
 
