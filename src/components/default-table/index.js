@@ -36,6 +36,11 @@ function DefaultTable(props) {
         // eslint-disable-next-line
     }, [page])
 
+    useEffect(() => {
+        handleSearchList()
+        // eslint-disable-next-line
+    }, [pageSize])
+
     return (
         <Table
             loading={tableLoading}
