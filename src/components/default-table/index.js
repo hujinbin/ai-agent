@@ -33,6 +33,7 @@ function DefaultTable(props) {
 
     useEffect(() => {
         handleSearchList()
+        // eslint-disable-next-line
     }, [page])
 
     return (
