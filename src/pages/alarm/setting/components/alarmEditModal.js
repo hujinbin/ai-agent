@@ -56,9 +56,10 @@ function alarmEditModal(props) {
                         <Radio value={false}>否</Radio>
                     </Radio.Group>
                 </Form.Item>
-                <Form.Item label={'电话'} name={'Phone'} rules={rulesObj.Phone}>
-                    <Input/>
-                </Form.Item>
+                {/*TODO 暂时注释，后续修改*/}
+                {/*<Form.Item label={'电话'} name={'Phone'} rules={rulesObj.Phone}>*/}
+                {/*    <Input/>*/}
+                {/*</Form.Item>*/}
                 <Form.Item label={'Secret'} name={'Secret'} rules={rulesObj.Secret}>
                     <TextArea/>
                 </Form.Item>

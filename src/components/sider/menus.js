@@ -56,18 +56,19 @@ const menus = [
             },
         ]
     },
-    {
-        key: 'system',
-        icon: <SettingOutlined/>,
-        label: '系统管理',
-        role: [0, 100],
-        children: [
-            {
-                key: 'system-setting',
-                label: '系统设置',
-            },
-        ]
-    },
+    // TODO 暂时注释后续再加
+    // {
+    //     key: 'system',
+    //     icon: <SettingOutlined/>,
+    //     label: '系统管理',
+    //     role: [0, 100],
+    //     children: [
+    //         {
+    //             key: 'system-setting',
+    //             label: '系统设置',
+    //         },
+    //     ]
+    // },
     {
         key: 'access',
         icon: <ApiOutlined/>,

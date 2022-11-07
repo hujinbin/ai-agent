@@ -1,5 +1,6 @@
 import {fetchNetworkStabilityList} from '../../../services/dataServices';
 import DefaultTable from "../../../components/default-table";
+import {Badge} from "antd";
 
 function DataPerformance() {
     const columns = [
@@ -30,7 +31,10 @@ function DataPerformance() {
         {
             title: '接口状态',
             key: 'Status',
-            render: (record) => <span>{ record.Status }({ record.StatusText || '-' })</span>,
+            render: (record) =>
+                <Badge
+                    status={ record.Status === 200 ? 'success' : 'warning' }
+                    text={<span>{ record.Status }({ record.StatusText || '-' })</span>} />,
             width: 200,
         },
         {

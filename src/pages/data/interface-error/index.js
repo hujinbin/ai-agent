@@ -1,3 +1,4 @@
+import { Badge } from 'antd';
 import DefaultTable from "../../../components/default-table";
 import {fetchNetworkErrorList} from "../../../services/dataServices";
 
@@ -30,7 +31,10 @@ function InterfaceError() {
         {
             title: '接口状态',
             key: 'Status',
-            render: (record) => <span>{ record.Status }({ record.StatusText || '-' })</span>,
+            render: (record) =>
+                <Badge
+                    status={ record.Status === 200 ? 'success' : 'warning' }
+                    text={<span>{ record.Status }({ record.StatusText || '-' })</span>} />,
             width: 200,
         },
         {
