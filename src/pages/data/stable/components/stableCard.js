@@ -5,6 +5,7 @@ import {timeConsumingFormatter, calPercent} from "../../../../utils";
 import {useState} from "react";
 import {CopyOutlined} from "@ant-design/icons";
 import CopyToClipboard from "react-clipboardjs-copy";
+import moment from "moment/moment";
 
 function StableCard(props) {
     const {data} = props;
@@ -55,11 +56,15 @@ function StableCard(props) {
             </p>
             <p className={'card-content-item'}>
                 <span className={'label'}>开始时间: </span>
-                <span className={'content'}>{timeConsumingFormatter(data.StartTime) || '-'}</span>
+                <span className={'content'}>{moment(data.StartTime * 1000).format('YYYY-MM-DD HH:mm:ss') || '-'}</span>
             </p>
             <p className={'card-content-item'}>
                 <span className={'label'}>持续时间: </span>
                 <span className={'content'}>{timeConsumingFormatter(data.Duration) || '-'}</span>
+            </p>
+            <p className={'card-content-item'}>
+                <span className={'label'}>创建时间: </span>
+                <span className={'content'}>{moment(data.CreateTime * 1000).format('YYYY-MM-DD HH:mm:ss') || '-'}</span>
             </p>
 
             <p className={'card-content-item'}>

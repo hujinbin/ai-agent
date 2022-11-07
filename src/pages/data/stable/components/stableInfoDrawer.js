@@ -3,6 +3,7 @@ import {STABLE_PAGE_TYPE} from "../../../../enums";
 import {calPercent, fileLengthFormat, timeConsumingFormatter} from "../../../../utils";
 import {CopyOutlined} from "@ant-design/icons";
 import CopyToClipboard from "react-clipboardjs-copy";
+import moment from "moment";
 
 function StableInfoDrawer(props) {
     const {
@@ -53,6 +54,10 @@ function StableInfoDrawer(props) {
             <p className={'drawer-content-item'}>
                 <span className={'label'}>持续时间：</span>
                 <span className={'content'}>{timeConsumingFormatter(data.Duration) || '-'}</span>
+            </p>
+            <p className={'card-content-item'}>
+                <span className={'label'}>创建时间: </span>
+                <span className={'content'}>{moment(data.CreateTime * 1000).format('YYYY-MM-DD HH:mm:ss') || '-'}</span>
             </p>
         </>
     );
