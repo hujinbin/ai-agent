@@ -4,6 +4,7 @@ import {BarChart} from "echarts/charts";
 import {useEffect, useState} from "react";
 import {fetchNetWorkErrorOverview, fetchStablerOverview} from "../../services/dashboard";
 import './styles/index.less';
+import {message} from "antd";
 
 const DomainId = localStorage.getItem('currentDomain') || '';
 
@@ -22,11 +23,15 @@ const getTopOptions = ({ titleText, data }) => {
         yAxis: {
             type: 'category',
             show: false,
-            data: data.map(item => item.Url),
+            data: data.map(item => item.Pathname),
+            axisLabel: {
+                formatter: '{value}'
+            },
+            triggerEvent: true,
         },
         series: [
             {
-                data: data.map(item => item.Value),
+                data: data.map(item => item.Number),
                 type: 'bar',
                 barWidth:'10px',
                 barGap:'20%',
@@ -72,12 +77,30 @@ function Dashboard() {
     const [networkOptions, setNetworkOptions] = useState({});
     const [stableOptions, setStableOptions] = useState({});
 
+    const copy = async text => {
+        if ('clipboard' in navigator) {
+            message.success('复制成功！');
+            return await navigator.clipboard.writeText(text);
+        } else {
+            message.success('复制成功！');
+            return document.execCommand('copy', true, text);
+        }
+    }
+
+    const handleClick = async params => {
+        await copy(params.name)
+    }
+
+    const eventObj = {
+        'click': handleClick,
+    }
+
     useEffect(() => {
         fetchNetWorkErrorOverview({
             DomainId,
         }).then(res => {
             const data = res.data.data || [];
-            setNetworkOptions(getTopOptions(data));
+            setNetworkOptions(getTopOptions({titleText: '网络异常接口TOP 10', data}));
         })
     }, [])
 
@@ -86,17 +109,18 @@ function Dashboard() {
             DomainId,
         }).then(res => {
             const data = res.data.data || [];
-            setStableOptions(getTopOptions(data));
+            setStableOptions(getTopOptions({titleText: '网络稳定接口TOP 10', data}));
         })
     }, [])
+
 
     return (
         <div className={'chart-wrapper'}>
             <div className={'chart-wrapper-item'}>
-                <Chart style={{ height: '400px' }} components={[GridComponent, LegendComponent, BarChart, TitleComponent]} options={stableOptions}/>
+                <Chart style={{ height: '400px' }} components={[GridComponent, LegendComponent, BarChart, TitleComponent]} options={stableOptions} events={eventObj}/>
             </div>
             <div className={'chart-wrapper-item'}>
-                <Chart style={{ height: '400px' }} components={[GridComponent, LegendComponent, BarChart, TitleComponent]} options={networkOptions}/>
+                <Chart style={{ height: '400px' }} components={[GridComponent, LegendComponent, BarChart, TitleComponent]} options={networkOptions} events={eventObj}/>
             </div>
         </div>
     )

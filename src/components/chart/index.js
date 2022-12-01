@@ -4,8 +4,7 @@ import * as echarts from 'echarts/core';
 
 import { CanvasRenderer } from 'echarts/renderers';
 
-const Chart = ({ renderType = 'canvas', options, style, components = [] }) => {
-    console.log(options);
+const Chart = ({ renderType = 'canvas', options, style, components = [], events = {} }) => {
     const chartRef = useRef();
     const chartInstance = useRef(null);
 
@@ -19,6 +18,14 @@ const Chart = ({ renderType = 'canvas', options, style, components = [] }) => {
             })
         }
         chartInstance.current?.setOption(options);
+        Object.keys(events).forEach(eventName => {
+            chartInstance.current.on(eventName, function (params) {
+                events[eventName](params);
+            })
+        })
+        chartInstance.current.on('event', function (params) {
+            console.log(params);
+        })
     }, [chartRef, options, renderType]);
 
     useEffect(() => {
