@@ -17,3 +17,19 @@ export function fetchStablerOverview(params) {
         params,
     });
 }
+
+export function fetchWebStableOverview(params) {
+    return request({
+        url: "/report/webStabilityOverview",
+        method: "GET",
+        params,
+    });
+}
+
+export function fetchErrorStableOverview(params) {
+    return request({
+        url: "/report/webErrorOverview",
+        method: "GET",
+        params,
+    });
+}
