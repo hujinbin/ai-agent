@@ -1,5 +1,5 @@
 import Chart from '../../components/chart';
-import {GridComponent, LegendComponent, TitleComponent} from "echarts/components";
+import {GridComponent, LegendComponent, TitleComponent, GraphicComponent} from "echarts/components";
 import {BarChart} from "echarts/charts";
 import {useEffect, useState} from "react";
 import {fetchNetWorkErrorOverview, fetchStablerOverview, fetchWebStableOverview, fetchErrorStableOverview} from "../../services/dashboard";
@@ -9,7 +9,40 @@ import {STABLE_PAGE_TYPE} from "../../enums";
 
 const DomainId = localStorage.getItem('currentDomain') || '';
 
+const emptyOptions = {
+    graphic: {
+        elements: [
+            {
+                type: 'image',
+                style: {
+                    image: require('./styles/empty.png'),
+                    width: 80,
+                    height: 80,
+                },
+                left: 'center',
+                top: 'center',
+            },
+            {
+                type: 'text',
+                style: {
+                    text: '暂无数据',
+                },
+                left: 'center',
+                top: '250px',
+            }
+        ]
+    },
+}
+
 const getTopOptions = ({ titleText, data }) => {
+    if (data.length === 0) {
+        return {
+            title: {
+                text: titleText,
+            },
+            ...emptyOptions,
+        }
+    }
     return {
         title: {
             text: titleText,
@@ -98,15 +131,21 @@ function Dashboard() {
 
     const renderStableChart = () => {
         const stableType = STABLE_PAGE_TYPE.getList();
-        fetchWebStableOverview(DomainId).then(res => {
+        fetchWebStableOverview({DomainId}).then(res => {
             const data = res.data.data || {};
-            Object.keys(data).forEach(key => {
-                data[key] = data[key] ? data[key] : [];
-            })
-            const result = stableType.forEach(item => {
-                item.list = data[item.value];
-            })
-            setStableList(result);
+            if (Object.keys(data).length > 0) {
+                Object.keys(data).forEach(key => {
+                    data[key] = data[key] ? data[key] : [];
+                })
+                stableType.forEach(item => {
+                    item.list = data[item.value] || [];
+                })
+                setStableList(stableType);
+            } else {
+                setStableList([])
+            }
+        }).catch(() => {
+            setStableList([])
         })
     }
 
@@ -120,6 +159,10 @@ function Dashboard() {
         }).then(res => {
             const data = res.data.data || [];
             setNetworkOptions(getTopOptions({titleText: '网络异常接口TOP 10', data}));
+        }).catch(() => {
+            setNetworkOptions(
+                getTopOptions({titleText: '网络异常接口TOP 10', data: []})
+            );
         })
     }, [])
 
@@ -129,6 +172,8 @@ function Dashboard() {
         }).then(res => {
             const data = res.data.data || [];
             setStableOptions(getTopOptions({titleText: '网络稳定接口TOP 10', data}));
+        }).catch(() => {
+            setStableOptions(getTopOptions({titleText: '网络稳定接口TOP 10', data: []}));
         })
     }, [])
 
@@ -138,6 +183,8 @@ function Dashboard() {
         }).then(res => {
             const data = res.data.data || [];
             setStableErrorOptions(getTopOptions({titleText: '页面错误TOP 10', data}));
+        }).catch(() => {
+            setStableErrorOptions(getTopOptions({titleText: '页面错误TOP 10', data: []}));
         })
     }, [])
 
@@ -145,22 +192,23 @@ function Dashboard() {
     return (
         <Row>
             <Col span={12}>
-                <Chart style={{ height: '400px' }} components={[GridComponent, LegendComponent, BarChart, TitleComponent]} options={stableOptions} events={eventObj}/>
+                <Chart style={{ height: '400px' }} components={[GridComponent, LegendComponent, BarChart, TitleComponent, GraphicComponent]} options={stableOptions} events={eventObj}/>
             </Col>
             <Col span={12}>
-                <Chart style={{ height: '400px' }} components={[GridComponent, LegendComponent, BarChart, TitleComponent]} options={networkOptions} events={eventObj}/>
+                <Chart style={{ height: '400px' }} components={[GridComponent, LegendComponent, BarChart, TitleComponent, GraphicComponent]} options={networkOptions} events={eventObj}/>
             </Col>
             <Col span={12}>
-                <Chart style={{ height: '400px' }} components={[GridComponent, LegendComponent, BarChart, TitleComponent]} options={stableErrorOptions} events={eventObj}/>
+                <Chart style={{ height: '400px' }} components={[GridComponent, LegendComponent, BarChart, TitleComponent, GraphicComponent]} options={stableErrorOptions} events={eventObj}/>
             </Col>
             {
                 stableList.map(item => (<Col
                     span={12}
+                    key={item.value}
                 >
                     <Chart
                         style={{ height: '400px' }}
-                        components={[GridComponent, LegendComponent, BarChart, TitleComponent]}
-                        options={getTopOptions(STABLE_PAGE_TYPE.getName(item.Pathname + '页面TOP 10', item.list))}
+                        components={[GridComponent, LegendComponent, BarChart, TitleComponent, GraphicComponent]}
+                        options={getTopOptions({titleText: STABLE_PAGE_TYPE.getName(item.value) + '页面TOP 10', data: item.list})}
                         events={eventObj}/>
                 </Col>)
                 )
