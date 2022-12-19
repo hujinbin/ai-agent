@@ -29,6 +29,12 @@ function DataPerformance() {
             ellipsis: true,
         },
         {
+            title: 'Method',
+            dataIndex: 'Method',
+            key: 'Method',
+            width: 100,
+        },
+        {
             title: '接口状态',
             key: 'Status',
             render: (record) =>
