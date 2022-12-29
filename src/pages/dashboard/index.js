@@ -59,6 +59,7 @@ const getTopOptions = ({ titleText, data }) => {
             show: false,
             data: data.map(item => item.Pathname),
             triggerEvent: true,
+            inverse: true,
         },
         series: [
             {
@@ -71,11 +72,11 @@ const getTopOptions = ({ titleText, data }) => {
                     formatter: function(params) {
                         const name = params.name.length > 60 ? params.name.slice(0, 60) + '...' : params.name;
                         const { dataIndex } = params;
-                        const index = Math.abs(dataIndex - 10);
+                        const index = dataIndex + 1;
                         if (index === 1) {
-                            return `{top1|Top 1} - {text|${name}}`
+                            return `{top1|Top 1} - {text| ${name}}`
                         } else if (index === 2) {
-                            return `{top2|Top 2} - {text|${name}}`
+                            return `{top2|Top 2} - {text| ${name}}`
                         } else if (index === 3) {
                             return `{top3|Top 3} - {text| ${name}}`
                         } else {
@@ -158,10 +159,10 @@ function Dashboard() {
             DomainId,
         }).then(res => {
             const data = res.data.data || [];
-            setNetworkOptions(getTopOptions({titleText: '网络异常接口TOP 10', data}));
+            setNetworkOptions(getTopOptions({titleText: '网络异常接口 TOP 10', data}));
         }).catch(() => {
             setNetworkOptions(
-                getTopOptions({titleText: '网络异常接口TOP 10', data: []})
+                getTopOptions({titleText: '网络异常接口 TOP 10', data: []})
             );
         })
     }, [])
@@ -171,9 +172,9 @@ function Dashboard() {
             DomainId,
         }).then(res => {
             const data = res.data.data || [];
-            setStableOptions(getTopOptions({titleText: '网络稳定接口TOP 10', data}));
+            setStableOptions(getTopOptions({titleText: '网络稳定接口 TOP 10', data}));
         }).catch(() => {
-            setStableOptions(getTopOptions({titleText: '网络稳定接口TOP 10', data: []}));
+            setStableOptions(getTopOptions({titleText: '网络稳定接口 TOP 10', data: []}));
         })
     }, [])
 
@@ -182,9 +183,9 @@ function Dashboard() {
             DomainId,
         }).then(res => {
             const data = res.data.data || [];
-            setStableErrorOptions(getTopOptions({titleText: '页面错误TOP 10', data}));
+            setStableErrorOptions(getTopOptions({titleText: '页面错误 TOP 10', data}));
         }).catch(() => {
-            setStableErrorOptions(getTopOptions({titleText: '页面错误TOP 10', data: []}));
+            setStableErrorOptions(getTopOptions({titleText: '页面错误 TOP 10', data: []}));
         })
     }, [])
 
@@ -208,7 +209,7 @@ function Dashboard() {
                     <Chart
                         style={{ height: '400px' }}
                         components={[GridComponent, LegendComponent, BarChart, TitleComponent, GraphicComponent]}
-                        options={getTopOptions({titleText: STABLE_PAGE_TYPE.getName(item.value) + '页面TOP 10', data: item.list})}
+                        options={getTopOptions({titleText: STABLE_PAGE_TYPE.getName(item.value) + ' TOP 10', data: item.list})}
                         events={eventObj}/>
                 </Col>)
                 )
