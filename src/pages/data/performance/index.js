@@ -47,7 +47,7 @@ function DataPerformance() {
             title: '接口耗时',
             dataIndex: 'Duration',
             key: 'Duration',
-            render: (record) => <span>{ (record / 1000).toFixed(0) }s</span>,
+            render: (record) => <span>{ record }ms</span>,
             width: 100,
         }
     ];
