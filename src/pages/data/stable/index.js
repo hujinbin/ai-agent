@@ -35,6 +35,7 @@ function DataStable() {
 
     return (
         <>
+        
             { tableList.length !== 0 ? <>
                 <Row gutter={[20, 20]}>
                     {tableList.map((item, index) => (

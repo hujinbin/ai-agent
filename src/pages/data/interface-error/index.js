@@ -1,8 +1,12 @@
-import { Badge } from 'antd';
+import {Badge, Form, Input, Button } from 'antd';
 import DefaultTable from "../../../components/default-table";
 import {fetchNetworkErrorList} from "../../../services/dataServices";
 
 function InterfaceError() {
+    const onSearch =()=>{
+        console.log(12222222)
+    }
+    
     const columns = [
         {
             title: 'ID',
@@ -53,12 +57,26 @@ function InterfaceError() {
     ];
 
     return (
+        <div>
+        <Form layout="inline" onSubmit={onSearch}>
+        <Form.Item label="url">
+            <Input
+              placeholder="url"
+            />
+        </Form.Item>
+        <Form.Item>
+          <Button type="primary" onClick={onSearch}>
+            搜索
+          </Button>
+        </Form.Item>
+      </Form>
         <DefaultTable
             columns={columns}
             request={fetchNetworkErrorList}
         >
 
         </DefaultTable>
+        </div>
     )
 }
 
