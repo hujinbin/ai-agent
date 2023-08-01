@@ -4,7 +4,7 @@ module.exports = function (app) {
     app.use(
         proxy.createProxyMiddleware(
             '/api', {
-                target: 'https://ops.ydctml.top',
+                target: 'http://card.leheavengame.com',
                 changeOrigin: true,
             }
         )
