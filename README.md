@@ -3,7 +3,10 @@
 监控管理后台
 
 网页地址
+
 https://ops.ydctml.top
+
+http://card.leheavengame.com
 
 ## Available Scripts
 
