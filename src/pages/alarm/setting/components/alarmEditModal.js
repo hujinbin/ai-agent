@@ -1,7 +1,8 @@
-import {Form, Modal, Radio, Switch, Input, Button,} from "antd";
+import {Form, Modal, Radio, Switch, Input, Button,Select} from "antd";
 import pattern from "../../../../utils/validator";
 
 const { TextArea } = Input;
+const { Option } = Select;
 
 const rulesObj = {
     Phone: [
@@ -49,6 +50,20 @@ function alarmEditModal(props) {
             >
                 <Form.Item label={'告警状态'} name={'OpenAlarm'} valuePropName={'checked'}>
                     <Switch/>
+                </Form.Item>
+                <Form.Item label={'告警域名'} name={'DomainIds'} valuePropName={'checked'}>
+                <Select
+            // value={props.currentDomain}
+            style={{ width: '200px', marginRight: '20px' }}
+            mode="multiple"
+            // onChange={handleChangeDomain}
+        >
+            {
+                props.domainList.map((domain, index) => (
+                    <Option key={index} value={String(domain.Id)}>{ domain.Domain }</Option>
+            )   )
+            }
+        </Select>
                 </Form.Item>
                 <Form.Item label={'是否通知所有人'} name={'AtAll'}>
                     <Radio.Group>
