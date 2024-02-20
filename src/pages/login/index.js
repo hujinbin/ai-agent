@@ -1,5 +1,5 @@
 import React from 'react';
-import { Row, Col } from 'antd';
+import { Row, Col } from "antd";
 import { withRouter } from "../../router/withRouter";
 import LoginForm from "./components/LoginForm";
 import { fetchLogin } from "../../services/loginServices";
@@ -9,6 +9,7 @@ import { actionCreators } from "../../store/global";
 import './styles/index.less'
 import Auth from "../../router/auth";
 import {List} from "immutable";
+import Guide from "../../components/guide/index";
 
 function LoginPage(props) {
     const { login } = Auth();
@@ -22,6 +23,7 @@ function LoginPage(props) {
     }
 
     const onFinish = (data) => {
+        console.log(data)
         fetchLogin(data).then(async res => {
             const userLoginInfo = res.data.data;
             Object.keys(userLoginInfo).forEach(key => {
@@ -34,15 +36,14 @@ function LoginPage(props) {
         });
     }
     return (
-        <Row className={'login-wrapper'}>
-            <Col span={6} offset={9}>
-                <h4 className={'title'}>Monitor App</h4>
-                <LoginForm
-                    onFinish={onFinish}
-                />
-            </Col>
-        </Row>
-    )
+      <Row className={"login-wrapper"}>
+        <Col span={6} offset={9}>
+          <h4 className={"title"}>Monitor App</h4>
+          <LoginForm onFinish={onFinish} />
+          <Guide></Guide>
+        </Col>
+      </Row>
+    );
 }
 
 const mapStateToProps = (state) => ({

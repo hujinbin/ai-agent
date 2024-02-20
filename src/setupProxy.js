@@ -2,11 +2,9 @@ const proxy = require('http-proxy-middleware')
 
 module.exports = function (app) {
     app.use(
-        proxy.createProxyMiddleware(
-            '/api', {
-                target: 'http://card.leheavengame.com',
-                changeOrigin: true,
-            }
-        )
-    )
+      proxy.createProxyMiddleware("/api", {
+        target: "https://monitor.leheavengame.com",
+        changeOrigin: true,
+      })
+    );
 }

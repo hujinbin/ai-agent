@@ -4,6 +4,7 @@ import React from "react";
 import {fetchUserRegister} from "../../services/loginServices";
 import { useNavigate } from "react-router-dom";
 import './styles/index.less'
+import Guide from "../../components/guide/index";
 
 function RegisterIndex() {
     const navigate = useNavigate();
@@ -23,15 +24,14 @@ function RegisterIndex() {
     }
 
     return (
-        <Row className={'register-wrapper'}>
-            <Col span={6} offset={9}>
-                <h4 className={'title'}>Monitor App</h4>
-                <RegisterForm
-                    onFinish={onFinish}
-                />
-            </Col>
-        </Row>
-    )
+      <Row className={"register-wrapper"}>
+        <Col span={6} offset={9}>
+          <h4 className={"title"}>Monitor App</h4>
+          <RegisterForm onFinish={onFinish} />
+          <Guide></Guide>
+        </Col>
+      </Row>
+    );
 }
 
 export default RegisterIndex
