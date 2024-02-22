@@ -1,6 +1,6 @@
-import React, { useState } from "react";
+import React from "react";
 // import { useNavigate } from "react-router-dom";
-import { Icon } from "antd";
+// import { Icon } from "antd";
 import "./index.less";
 
 function Guide() {
@@ -12,7 +12,7 @@ function Guide() {
         target="_blank"
         rel="noopener noreferrer"
       >
-        <Icon type="github" />
+         <img src={require('../../assets/github.png')}/>
       </a>
     </div>
   );

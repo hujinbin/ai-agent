@@ -13,6 +13,7 @@ function AlarmSetting() {
 
     const handleSetAlarmInfo = () => {
         fetchAlarmInfo().then(res => {
+            console.log(res)
             setAlarmInfo(res.data.data)
         })
     }
@@ -37,55 +38,57 @@ function AlarmSetting() {
     }, [])
 
     return (
-        <div
-            style={{
-                display: 'flex',
-                justifyContent: 'center',
-                alignItems: 'center',
-                height: '100%'
-            }}
+      <div
+        style={{
+          display: "flex",
+          justifyContent: "center",
+          alignItems: "center",
+          height: "100%",
+        }}
+      >
+        <Descriptions
+          bordered={true}
+          title={"告警信息"}
+          size={"small"}
+          colon={true}
+          column={1}
+          style={{
+            width: 500,
+            background: "#FFFFFF",
+            padding: 20,
+          }}
+          labelStyle={{
+            width: 140,
+          }}
+          extra={
+            <Button type={"primary"} onClick={() => setIsModalVisible(true)}>
+              编 辑
+            </Button>
+          }
         >
-            <Descriptions
-                bordered={true}
-                title={'告警信息'}
-                size={'small'}
-                colon={true}
-                column={1}
-                style={{
-                    width: 500,
-                    background: '#FFFFFF',
-                    padding: 20,
-                }}
-                labelStyle={{
-                    width: 140
-                }}
-                extra={
-                    <Button
-                        type={'primary'}
-                        onClick={() => setIsModalVisible(true)}
-                    >
-                        编 辑
-                    </Button>
-                }
-            >
-                <Item label={'告警状态'}>{alarmInfo.OpenAlarm ? <CheckCircleFilled style={{ color: 'green' }}/> : <CloseCircleFilled style={{ color: 'red' }}/>}</Item>
-                <Item label={'是否通知所有人'}> {alarmInfo.AtAll ? '是' : '否'}</Item>
-                {/*TODO 暂时注释，后续修改*/}
-                {/*<Item label={'联系电话'}>{alarmInfo.Phone || '-'}</Item>*/}
-                <Item label={'Secret'}>{alarmInfo.Secret || '-'}</Item>
-                <Item label={'AccessToken'}>{alarmInfo.AccessToken || '-'}</Item>
-            </Descriptions>
-
-            <AlarmEditModal
-                isModalVisible={isModalVisible}
-                setIsModalVisible={setIsModalVisible}
-                submitBtnLoading={submitBtnLoading}
-                onFinish={handleOnFinish}
-                onCancel={handleOnCancel}
-                initialValues={alarmInfo}
-            />
-        </div>
-    )
+          <Item label={"告警状态"}>
+            {alarmInfo.OpenAlarm ? (
+              <CheckCircleFilled style={{ color: "green" }} />
+            ) : (
+              <CloseCircleFilled style={{ color: "red" }} />
+            )}
+          </Item>
+          <Item label={"是否通知所有人"}> {alarmInfo.AtAll ? "是" : "否"}</Item>
+          {/*TODO 暂时注释，后续修改*/}
+          {/*<Item label={'联系电话'}>{alarmInfo.Phone || '-'}</Item>*/}
+          <Item label={"Secret"}>{alarmInfo.Secret || "-"}</Item>
+          <Item label={"AccessToken"}>{alarmInfo.AccessToken || "-"}</Item>
+        </Descriptions>
+         <AlarmEditModal
+          isModalVisible={isModalVisible}
+          setIsModalVisible={setIsModalVisible}
+          submitBtnLoading={submitBtnLoading}
+          onFinish={handleOnFinish}
+          onCancel={handleOnCancel}
+          initialValues={alarmInfo}
+        />
+      </div>
+    );
 }
 
 export default AlarmSetting;
