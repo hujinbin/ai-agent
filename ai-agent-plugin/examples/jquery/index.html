@@ -1,0 +1,189 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>AI Agent - jQuery 示例</title>
+  <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+  <!-- 引入插件 -->
+  <script src="../../dist/ai-agent.min.js"></script>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      margin: 0;
+      padding: 20px;
+      background-color: #f5f5f5;
+    }
+    .container {
+      max-width: 800px;
+      margin: 0 auto;
+      background-color: white;
+      padding: 30px;
+      border-radius: 8px;
+      box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+    }
+    h1 {
+      color: #4096ff;
+      margin-top: 0;
+    }
+    pre {
+      background-color: #f8f8f8;
+      padding: 15px;
+      border-radius: 4px;
+      overflow-x: auto;
+    }
+    .button {
+      background-color: #4096ff;
+      color: white;
+      border: none;
+      padding: 10px 20px;
+      border-radius: 4px;
+      cursor: pointer;
+      font-size: 14px;
+      margin: 10px 0;
+    }
+    .button:hover {
+      background-color: #2e80ff;
+    }
+    .config-section {
+      margin: 20px 0;
+      padding: 15px;
+      border: 1px solid #eee;
+      border-radius: 4px;
+    }
+    select, input {
+      padding: 8px;
+      margin: 5px 0;
+      border: 1px solid #ddd;
+      border-radius: 4px;
+    }
+    label {
+      display: block;
+      margin-top: 10px;
+      font-weight: bold;
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <h1>AI Agent - jQuery 示例</h1>
+    <p>这是一个在 jQuery 项目中使用 AI Agent 插件的简单示例。</p>
+    
+    <div class="config-section">
+      <h2>配置选项</h2>
+      <label for="theme">主题：</label>
+      <select id="theme">
+        <option value="light">浅色</option>
+        <option value="dark">深色</option>
+      </select>
+      
+      <label for="position">位置：</label>
+      <select id="position">
+        <option value="bottom-right">右下角</option>
+        <option value="bottom-left">左下角</option>
+        <option value="top-right">右上角</option>
+        <option value="top-left">左上角</option>
+      </select>
+      
+      <label for="title">标题：</label>
+      <input type="text" id="title" value="jQuery AI 助手">
+      
+      <label for="placeholder">输入框占位文本：</label>
+      <input type="text" id="placeholder" value="请输入问题...">
+      
+      <button id="apply" class="button">应用配置</button>
+    </div>
+
+    <h2>代码示例</h2>
+    <pre><code>$(document).ready(function() {
+  // 初始化 AI Agent
+  window.aiAgent = new AIAgent({
+    apiUrl: '/api/mock/chat', // 示例使用了模拟 API
+    title: 'jQuery AI 助手',
+    position: 'bottom-right',
+    theme: 'light'
+  });
+});</code></pre>
+
+    <button id="destroy" class="button">销毁插件</button>
+    <button id="recreate" class="button">重新创建插件</button>
+  </div>
+
+  <script>
+    $(document).ready(function() {
+      let aiAgent = null;
+      
+      function createAgent() {
+        // 获取配置
+        const theme = $('#theme').val();
+        const position = $('#position').val();
+        const title = $('#title').val();
+        const placeholder = $('#placeholder').val();
+        
+        // 创建 AI Agent 实例
+        aiAgent = new AIAgent({
+          apiUrl: '/api/mock/chat', // 这个接口是模拟的，实际项目中替换为真实API
+          theme: theme,
+          position: position,
+          title: title,
+          placeholder: placeholder
+        });
+        
+        // 添加一个模拟API响应的拦截器（仅用于演示）
+        const originalFetch = window.fetch;
+        window.fetch = function(url, options) {
+          if (url === '/api/mock/chat') {
+            return new Promise((resolve) => {
+              setTimeout(() => {
+                const data = JSON.parse(options.body);
+                let response;
+                
+                if (data.message.toLowerCase().includes('你好') || 
+                    data.message.toLowerCase().includes('hi') || 
+                    data.message.toLowerCase().includes('hello')) {
+                  response = { reply: '你好！我是AI助手，有什么可以帮到你的吗？' };
+                } else if (data.message.toLowerCase().includes('时间') || 
+                         data.message.toLowerCase().includes('几点')) {
+                  const now = new Date();
+                  response = { reply: `现在的时间是：${now.toLocaleTimeString()}` };
+                } else {
+                  response = { reply: '我理解您的问题了。这是一个示例回复，在实际项目中，这里会返回真实的AI响应。' };
+                }
+                
+                resolve({
+                  ok: true,
+                  json: () => Promise.resolve(response)
+                });
+              }, 1000); // 模拟网络延迟
+            });
+          }
+          return originalFetch(url, options);
+        };
+      }
+      
+      // 初始化创建
+      createAgent();
+      
+      // 应用配置按钮
+      $('#apply').on('click', function() {
+        if (aiAgent) aiAgent.destroy();
+        createAgent();
+      });
+      
+      // 销毁插件按钮
+      $('#destroy').on('click', function() {
+        if (aiAgent) {
+          aiAgent.destroy();
+          aiAgent = null;
+        }
+      });
+      
+      // 重新创建插件按钮
+      $('#recreate').on('click', function() {
+        if (aiAgent) aiAgent.destroy();
+        createAgent();
+      });
+    });
+  </script>
+</body>
+</html>

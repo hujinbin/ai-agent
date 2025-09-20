@@ -1,0 +1,248 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>AI Agent 插件演示</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      margin: 0;
+      padding: 0;
+      background-color: #f5f5f5;
+      color: #333;
+    }
+    
+    header {
+      background-color: #4096ff;
+      color: white;
+      padding: 30px 20px;
+      text-align: center;
+    }
+    
+    h1 {
+      margin: 0;
+      font-size: 36px;
+    }
+    
+    .subtitle {
+      margin-top: 10px;
+      font-size: 18px;
+      opacity: 0.9;
+    }
+    
+    main {
+      max-width: 1000px;
+      margin: 0 auto;
+      padding: 40px 20px;
+    }
+    
+    .card-container {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+      gap: 20px;
+      margin-top: 30px;
+    }
+    
+    .card {
+      background: white;
+      border-radius: 8px;
+      overflow: hidden;
+      box-shadow: 0 3px 10px rgba(0, 0, 0, 0.1);
+      transition: transform 0.3s, box-shadow 0.3s;
+    }
+    
+    .card:hover {
+      transform: translateY(-5px);
+      box-shadow: 0 8px 15px rgba(0, 0, 0, 0.1);
+    }
+    
+    .card-header {
+      padding: 15px;
+      background-color: #f8f9fa;
+      border-bottom: 1px solid #eee;
+    }
+    
+    .card-title {
+      margin: 0;
+      font-size: 20px;
+      color: #4096ff;
+    }
+    
+    .card-body {
+      padding: 20px;
+      min-height: 100px;
+    }
+    
+    .card-body p {
+      margin: 0 0 15px;
+      line-height: 1.6;
+    }
+    
+    .card-footer {
+      padding: 15px;
+      background-color: #f8f9fa;
+      border-top: 1px solid #eee;
+      text-align: center;
+    }
+    
+    .btn {
+      display: inline-block;
+      background-color: #4096ff;
+      color: white;
+      text-decoration: none;
+      padding: 8px 16px;
+      border-radius: 4px;
+      transition: background-color 0.2s;
+    }
+    
+    .btn:hover {
+      background-color: #2e80ff;
+    }
+    
+    .intro-section {
+      max-width: 800px;
+      margin: 0 auto 40px;
+      text-align: center;
+    }
+    
+    footer {
+      text-align: center;
+      padding: 20px;
+      margin-top: 40px;
+      color: #666;
+      font-size: 14px;
+    }
+    
+    code {
+      background-color: #f3f3f3;
+      padding: 2px 6px;
+      border-radius: 3px;
+      font-family: Consolas, Monaco, monospace;
+    }
+  </style>
+</head>
+<body>
+  <header>
+    <h1>AI Agent 插件</h1>
+    <p class="subtitle">跨框架通用的AI对话助手 - 支持Vue、React、jQuery等多框架项目</p>
+  </header>
+  
+  <main>
+    <section class="intro-section">
+      <h2>简单易用的AI助手集成方案</h2>
+      <p>
+        AI Agent 插件采用原生JavaScript + UMD模块化规范实现，确保在各种前端框架中无缝集成。
+        无论您的项目使用Vue、React还是jQuery，只需简单几行代码，即可为您的应用添加智能AI对话功能。
+      </p>
+    </section>
+    
+    <div class="card-container">
+      <div class="card">
+        <div class="card-header">
+          <h3 class="card-title">jQuery 示例</h3>
+        </div>
+        <div class="card-body">
+          <p>在传统的jQuery项目中使用AI Agent插件的示例，演示了如何通过简单的脚本引入方式集成插件。</p>
+          <p>适合快速集成到现有的基于jQuery的网站或管理系统。</p>
+        </div>
+        <div class="card-footer">
+          <a href="examples/jquery/index.html" class="btn">查看示例</a>
+        </div>
+      </div>
+      
+      <div class="card">
+        <div class="card-header">
+          <h3 class="card-title">React 示例</h3>
+        </div>
+        <div class="card-body">
+          <p>展示了如何在React应用中集成AI Agent插件，包括组件生命周期管理和状态控制。</p>
+          <p>适合现代化的单页面应用(SPA)和React前端项目。</p>
+        </div>
+        <div class="card-footer">
+          <a href="#" class="btn">查看代码</a>
+        </div>
+      </div>
+      
+      <div class="card">
+        <div class="card-header">
+          <h3 class="card-title">Vue 示例</h3>
+        </div>
+        <div class="card-body">
+          <p>演示了在Vue.js框架中如何集成AI Agent插件，包括响应式配置和组件生命周期管理。</p>
+          <p>适合Vue.js项目和渐进式Web应用。</p>
+        </div>
+        <div class="card-footer">
+          <a href="#" class="btn">查看代码</a>
+        </div>
+      </div>
+    </div>
+    
+    <section style="margin-top: 50px;">
+      <h2>快速开始</h2>
+      <div style="background: #f8f9fa; padding: 20px; border-radius: 8px; margin-top: 15px;">
+        <p>1. 通过CDN引入插件</p>
+        <pre><code>&lt;script src="https://cdn.example.com/ai-agent.min.js"&gt;&lt;/script&gt;</code></pre>
+        
+        <p>2. 初始化插件</p>
+        <pre><code>// 创建 AI Agent 实例
+const aiAgent = new AIAgent({
+  apiUrl: '/api/ai/chat',
+  theme: 'light',
+  position: 'bottom-right'
+});</code></pre>
+      </div>
+    </section>
+  </main>
+  
+  <footer>
+    <p>AI Agent 插件 © 2025 - 跨框架通用的AI对话助手</p>
+  </footer>
+  
+  <!-- 引入插件并初始化 -->
+  <script src="dist/ai-agent.min.js"></script>
+  <script>
+    document.addEventListener('DOMContentLoaded', function() {
+      const aiAgent = new AIAgent({
+        apiUrl: '/api/mock/chat',
+        title: '演示助手',
+        theme: 'light',
+        position: 'bottom-right'
+      });
+      
+      // 添加一个模拟API响应的拦截器（仅用于演示）
+      const originalFetch = window.fetch;
+      window.fetch = function(url, options) {
+        if (url === '/api/mock/chat') {
+          return new Promise((resolve) => {
+            setTimeout(() => {
+              const data = JSON.parse(options.body);
+              let response;
+              
+              if (data.message.toLowerCase().includes('你好') || 
+                  data.message.toLowerCase().includes('hi') || 
+                  data.message.toLowerCase().includes('hello')) {
+                response = { reply: '你好！我是演示助手，有什么可以帮到你的吗？\n\n试试输入：\n- "这是什么插件？"\n- "如何在React中使用？"\n- "插件有哪些特性？"' };
+              } else if (data.message.toLowerCase().includes('什么插件')) {
+                response = { reply: '这是一个跨框架通用的AI Agent前端插件，采用原生JavaScript + UMD模块化规范实现，可以在Vue、React、jQuery等多种框架中无缝集成。' };
+              } else if (data.message.toLowerCase().includes('react')) {
+                response = { reply: '在React中使用AI Agent插件非常简单：\n\n```jsx\nimport React, { useEffect } from \'react\';\nimport AIAgent from \'ai-agent-plugin\';\n\nfunction App() {\n  useEffect(() => {\n    // 初始化 AI Agent\n    const aiAgent = new AIAgent({\n      apiUrl: \'/api/ai/chat\',\n      theme: \'dark\',\n      title: \'React AI 助手\'\n    });\n    \n    // 组件卸载时销毁插件\n    return () => aiAgent.destroy();\n  }, []);\n\n  return <div>React 项目</div>;\n}\n```' };
+              } else if (data.message.toLowerCase().includes('特性')) {
+                response = { reply: 'AI Agent插件的主要特性包括：\n\n1. 跨框架兼容：支持Vue、React、jQuery等多框架项目\n2. 样式隔离：避免与宿主项目样式冲突\n3. 主题定制：支持浅色/深色主题\n4. 位置灵活：支持四角悬浮定位\n5. 响应式设计：适配移动端和桌面端\n6. 简单易用：引入即可使用，无复杂配置' };
+              } else {
+                response = { reply: '这是一个演示回复。在实际项目中，这里将返回真实的AI回答。\n\n您可以尝试询问：\n- "这是什么插件？"\n- "如何在React中使用？"\n- "插件有哪些特性？"' };
+              }
+              
+              resolve({
+                ok: true,
+                json: () => Promise.resolve(response)
+              });
+            }, 1000); // 模拟网络延迟
+          });
+        }
+        return originalFetch(url, options);
+      };
+    });
+  </script>
+</body>
+</html>
