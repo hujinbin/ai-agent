@@ -1,18 +1,49 @@
 /**
  * AIAgent - 跨框架通用的AI对话助手插件
  * 支持Vue、React、jQuery等多种框架
- * 采用原生JavaScript + UMD模块化规范实现
+ * 采用TypeScript + UMD模块化规范实现
  */
 
 // 样式隔离
 import './styles/ai-agent.css';
 
+// 导入类型定义
+import { AIAgentOptions, ChatMessage, ApiResponse, PositionStyles, PositionStyleKey } from './types';
+
 /**
  * AIAgent类 - 插件的主类
- * @param {Object} options - 配置选项
  */
 class AIAgent {
-  constructor(options = {}) {
+  /**
+   * 配置选项
+   */
+  private options: Required<AIAgentOptions>;
+  
+  /**
+   * 对话历史记录
+   */
+  private chatHistory: ChatMessage[] = [];
+  
+  /**
+   * 面板是否展开
+   */
+  private isOpen: boolean = false;
+  
+  /**
+   * 对话面板DOM元素
+   */
+  private panelEl: HTMLDivElement | null = null;
+  
+  /**
+   * 触发按钮DOM元素
+   */
+  private buttonEl: HTMLButtonElement | null = null;
+
+  /**
+   * 创建AIAgent实例
+   * @param options 配置选项
+   */
+  constructor(options: AIAgentOptions = {}) {
     // 默认配置 + 用户自定义配置
     this.options = {
       apiUrl: options.apiUrl || '/api/ai/chat', // 后端 AI 接口地址
@@ -22,10 +53,7 @@ class AIAgent {
       title: options.title || 'AI 助手',
       ...options
     };
-    this.chatHistory = []; // 对话历史
-    this.isOpen = false;   // 面板是否展开
-    this.panelEl = null;   // 对话面板 DOM
-    this.buttonEl = null;  // 触发按钮 DOM
+    
     this.init(); // 初始化插件
   }
 
@@ -33,28 +61,29 @@ class AIAgent {
    * 初始化插件
    * 创建界面、绑定事件
    */
-  init() {
+  private init(): void {
     this.createTriggerButton();
     this.createChatPanel();
     this.injectStyles();
-    document.body.appendChild(this.buttonEl);
+    document.body.appendChild(this.buttonEl!);
   }
 
   /**
    * 创建悬浮触发按钮
    */
-  createTriggerButton() {
+  private createTriggerButton(): void {
     this.buttonEl = document.createElement('button');
     this.buttonEl.className = 'ai-agent-btn';
+    
     // 设置按钮的位置
-    const positionStyles = {
+    const positionStyles: PositionStyles = {
       'bottom-right': { bottom: '20px', right: '20px' },
       'bottom-left': { bottom: '20px', left: '20px' },
       'top-right': { top: '20px', right: '20px' },
       'top-left': { top: '20px', left: '20px' },
     };
     
-    const position = positionStyles[this.options.position] || positionStyles['bottom-right'];
+    const position = positionStyles[this.options.position as PositionStyleKey] || positionStyles['bottom-right'];
     Object.assign(this.buttonEl.style, position);
     
     this.buttonEl.innerHTML = `
@@ -71,7 +100,7 @@ class AIAgent {
   /**
    * 创建对话面板
    */
-  createChatPanel() {
+  private createChatPanel(): void {
     this.panelEl = document.createElement('div');
     this.panelEl.className = `ai-agent-panel ai-agent-theme-${this.options.theme} ai-agent-pos-${this.options.position}`;
     this.panelEl.style.display = 'none';
@@ -89,22 +118,26 @@ class AIAgent {
     
     // 绑定关闭按钮事件
     const closeBtn = this.panelEl.querySelector('.ai-agent-close');
-    closeBtn.addEventListener('click', () => this.closePanel());
+    if (closeBtn) {
+      closeBtn.addEventListener('click', () => this.closePanel());
+    }
     
     // 绑定输入/发送事件
-    const input = this.panelEl.querySelector('.ai-agent-input');
+    const input = this.panelEl.querySelector('.ai-agent-input') as HTMLInputElement;
     const sendBtn = this.panelEl.querySelector('.ai-agent-send');
-    input.addEventListener('keypress', (e) => {
-      if (e.key === 'Enter' && input.value.trim()) {
-        this.sendMessage(input.value);
-      }
-    });
-    
-    sendBtn.addEventListener('click', () => {
-      if (input.value.trim()) {
-        this.sendMessage(input.value);
-      }
-    });
+    if (input && sendBtn) {
+      input.addEventListener('keypress', (e) => {
+        if (e.key === 'Enter' && input.value.trim()) {
+          this.sendMessage(input.value);
+        }
+      });
+      
+      sendBtn.addEventListener('click', () => {
+        if (input.value.trim()) {
+          this.sendMessage(input.value);
+        }
+      });
+    }
     
     document.body.appendChild(this.panelEl);
   }
@@ -114,13 +147,13 @@ class AIAgent {
    * 为了确保代码的模块化，样式已移至单独的CSS文件
    * 但此方法保留，便于动态注入特定样式
    */
-  injectStyles() {
+  private injectStyles(): void {
     // 动态计算位置相关的样式
     const style = document.createElement('style');
     style.setAttribute('ai-agent-dynamic-styles', '');
     
     // 根据配置计算面板位置
-    const positions = {
+    const positions: Record<PositionStyleKey, string> = {
       'bottom-right': 'bottom: 70px; right: 20px;',
       'bottom-left': 'bottom: 70px; left: 20px;',
       'top-right': 'top: 70px; right: 20px;',
@@ -128,20 +161,22 @@ class AIAgent {
     };
     
     // 设置按钮的位置
-    const buttonPositions = {
+    const buttonPositions: Record<PositionStyleKey, string> = {
       'bottom-right': 'bottom: 20px; right: 20px;',
       'bottom-left': 'bottom: 20px; left: 20px;',
       'top-right': 'top: 20px; right: 20px;',
       'top-left': 'top: 20px; left: 20px;',
     };
     
+    const position = this.options.position as PositionStyleKey;
+    
     // 动态生成位置相关的样式
     style.textContent = `
-      .ai-agent-panel.ai-agent-pos-${this.options.position} {
-        ${positions[this.options.position] || positions['bottom-right']}
+      .ai-agent-panel.ai-agent-pos-${position} {
+        ${positions[position] || positions['bottom-right']}
       }
       .ai-agent-btn {
-        ${buttonPositions[this.options.position] || buttonPositions['bottom-right']}
+        ${buttonPositions[position] || buttonPositions['bottom-right']}
       }
     `;
     
@@ -151,31 +186,42 @@ class AIAgent {
   /**
    * 切换面板显示/隐藏
    */
-  togglePanel() {
+  public togglePanel(): void {
     this.isOpen = !this.isOpen;
-    this.panelEl.style.display = this.isOpen ? 'flex' : 'none';
-    if (this.isOpen) {
-      setTimeout(() => this.panelEl.querySelector('.ai-agent-input').focus(), 300);
+    
+    if (this.panelEl) {
+      this.panelEl.style.display = this.isOpen ? 'flex' : 'none';
+      
+      if (this.isOpen) {
+        const input = this.panelEl.querySelector('.ai-agent-input') as HTMLInputElement;
+        if (input) {
+          setTimeout(() => input.focus(), 300);
+        }
+      }
     }
   }
 
   /**
    * 关闭面板
    */
-  closePanel() {
+  public closePanel(): void {
     this.isOpen = false;
-    this.panelEl.style.display = 'none';
+    if (this.panelEl) {
+      this.panelEl.style.display = 'none';
+    }
   }
 
   /**
    * 发送消息到后端 AI 接口
-   * @param {string} text - 用户输入的消息文本
+   * @param text 用户输入的消息文本
    */
-  sendMessage(text) {
-    if (!text.trim()) return;
+  public sendMessage(text: string): void {
+    if (!text.trim() || !this.panelEl) return;
     
-    const input = this.panelEl.querySelector('.ai-agent-input');
-    const messagesEl = this.panelEl.querySelector('.ai-agent-messages');
+    const input = this.panelEl.querySelector('.ai-agent-input') as HTMLInputElement;
+    const messagesEl = this.panelEl.querySelector('.ai-agent-messages') as HTMLDivElement;
+    
+    if (!input || !messagesEl) return;
     
     // 添加用户消息到界面
     this.addMessage('user', text);
@@ -199,7 +245,7 @@ class AIAgent {
         if (!res.ok) {
           throw new Error('API响应异常: ' + res.status);
         }
-        return res.json();
+        return res.json() as Promise<ApiResponse>;
       })
       .then(data => {
         // 移除加载中状态
@@ -225,10 +271,10 @@ class AIAgent {
 
   /**
    * 显示加载中状态
-   * @param {HTMLElement} messagesEl - 消息容器元素
-   * @returns {string} 加载状态的唯一ID
+   * @param messagesEl 消息容器元素
+   * @returns 加载状态的唯一ID
    */
-  showLoading(messagesEl) {
+  private showLoading(messagesEl: HTMLDivElement): string {
     const loadingId = 'loading-' + Date.now();
     const loadingEl = document.createElement('div');
     loadingEl.className = 'ai-agent-msg ai-agent-msg-ai ai-agent-loading';
@@ -247,9 +293,9 @@ class AIAgent {
 
   /**
    * 移除加载中状态
-   * @param {string} loadingId - 加载状态的唯一ID
+   * @param loadingId 加载状态的唯一ID
    */
-  removeLoading(loadingId) {
+  private removeLoading(loadingId: string): void {
     const loadingEl = document.getElementById(loadingId);
     if (loadingEl && loadingEl.parentNode) {
       loadingEl.parentNode.removeChild(loadingEl);
@@ -258,21 +304,21 @@ class AIAgent {
 
   /**
    * 添加消息到历史记录
-   * @param {string} role - 角色：'user' 或 'ai'
-   * @param {string} content - 消息内容
+   * @param role 角色：'user' 或 'ai'
+   * @param content 消息内容
    */
-  addMessage(role, content) {
+  private addMessage(role: 'user' | 'ai', content: string): void {
     this.chatHistory.push({ role, content });
     if (this.chatHistory.length > 20) this.chatHistory.shift(); // 限制历史长度
   }
 
   /**
    * 创建消息 DOM 元素
-   * @param {string} role - 角色：'user' 或 'ai'
-   * @param {string} content - 消息内容
-   * @returns {HTMLElement} 消息DOM元素
+   * @param role 角色：'user' 或 'ai'
+   * @param content 消息内容
+   * @returns 消息DOM元素
    */
-  createMessageEl(role, content) {
+  private createMessageEl(role: 'user' | 'ai', content: string): HTMLDivElement {
     const msgEl = document.createElement('div');
     msgEl.className = `ai-agent-msg ai-agent-msg-${role}`;
     
@@ -290,15 +336,17 @@ class AIAgent {
   /**
    * 销毁插件（清理 DOM 和事件）
    */
-  destroy() {
+  public destroy(): void {
     // 移除悬浮按钮
     if (this.buttonEl && this.buttonEl.parentNode) {
       this.buttonEl.parentNode.removeChild(this.buttonEl);
+      this.buttonEl = null;
     }
     
     // 移除对话面板
     if (this.panelEl && this.panelEl.parentNode) {
       this.panelEl.parentNode.removeChild(this.panelEl);
+      this.panelEl = null;
     }
     
     // 移除动态注入的样式

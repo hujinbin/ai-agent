@@ -1,0 +1,239 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>AI Agent 插件开发预览</title>
+    <style>
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, 'Open Sans', 'Helvetica Neue', sans-serif;
+            margin: 0;
+            padding: 30px;
+            color: #333;
+            background-color: #f7f7f7;
+        }
+        
+        .container {
+            max-width: 1000px;
+            margin: 0 auto;
+            padding: 30px;
+            background-color: white;
+            border-radius: 10px;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+        }
+        
+        h1 {
+            color: #4096ff;
+            margin-top: 0;
+            border-bottom: 2px solid #eee;
+            padding-bottom: 10px;
+        }
+        
+        .config-panel {
+            background-color: #f9f9f9;
+            border: 1px solid #eee;
+            border-radius: 5px;
+            padding: 20px;
+            margin-bottom: 30px;
+        }
+        
+        .form-group {
+            margin-bottom: 15px;
+        }
+        
+        label {
+            display: block;
+            margin-bottom: 5px;
+            font-weight: bold;
+        }
+        
+        select, input {
+            width: 100%;
+            padding: 8px;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+            font-size: 14px;
+        }
+        
+        button {
+            background-color: #4096ff;
+            color: white;
+            border: none;
+            padding: 10px 20px;
+            border-radius: 4px;
+            cursor: pointer;
+            font-size: 14px;
+            margin-top: 10px;
+        }
+        
+        button:hover {
+            background-color: #2e80ff;
+        }
+        
+        .demo-section {
+            margin-top: 30px;
+            padding-top: 20px;
+            border-top: 1px solid #eee;
+        }
+        
+        pre {
+            background-color: #f5f5f5;
+            padding: 15px;
+            border-radius: 4px;
+            overflow-x: auto;
+        }
+        
+        code {
+            font-family: 'Courier New', Courier, monospace;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>AI Agent 插件开发预览</h1>
+        
+        <div class="config-panel">
+            <h2>配置选项</h2>
+            
+            <div class="form-group">
+                <label for="theme">主题：</label>
+                <select id="theme">
+                    <option value="light">浅色</option>
+                    <option value="dark">深色</option>
+                </select>
+            </div>
+            
+            <div class="form-group">
+                <label for="position">位置：</label>
+                <select id="position">
+                    <option value="bottom-right">右下角</option>
+                    <option value="bottom-left">左下角</option>
+                    <option value="top-right">右上角</option>
+                    <option value="top-left">左上角</option>
+                </select>
+            </div>
+            
+            <div class="form-group">
+                <label for="title">标题：</label>
+                <input type="text" id="title" value="开发预览助手">
+            </div>
+            
+            <div class="form-group">
+                <label for="placeholder">输入框占位文本：</label>
+                <input type="text" id="placeholder" value="请输入问题...">
+            </div>
+            
+            <button id="apply-config">应用配置</button>
+        </div>
+        
+        <div class="demo-section">
+            <h2>实时预览</h2>
+            <p>当前显示的AI Agent插件是根据上面的配置生成的。您可以更改配置并点击"应用配置"按钮来查看不同配置下的效果。</p>
+            <p>在此页面中，所有API调用都会返回模拟数据，可以通过修改开发文件来测试不同的响应情况。</p>
+        </div>
+        
+        <div class="demo-section">
+            <h2>使用示例</h2>
+            <pre><code>// 初始化 AI Agent
+const aiAgent = new AIAgent({
+  apiUrl: '/api/ai/chat',
+  theme: 'light',
+  position: 'bottom-right',
+  title: '开发预览助手',
+  placeholder: '请输入问题...'
+});</code></pre>
+        </div>
+    </div>
+    
+    <script>
+        // 等待 AIAgent 加载完成
+        document.addEventListener('DOMContentLoaded', function() {
+            let aiAgent = null;
+            
+            // 创建 AI Agent 实例的函数
+            function createAgent() {
+                if (aiAgent) {
+                    aiAgent.destroy();
+                }
+                
+                // 获取配置值
+                const theme = document.getElementById('theme').value;
+                const position = document.getElementById('position').value;
+                const title = document.getElementById('title').value;
+                const placeholder = document.getElementById('placeholder').value;
+                
+                // 更新代码示例
+                document.querySelector('pre code').textContent = `// 初始化 AI Agent
+const aiAgent = new AIAgent({
+  apiUrl: '/api/ai/chat',
+  theme: '${theme}',
+  position: '${position}',
+  title: '${title}',
+  placeholder: '${placeholder}'
+});`;
+                
+                // 创建 AI Agent 实例
+                aiAgent = new AIAgent({
+                    apiUrl: '/api/mock/chat',
+                    theme,
+                    position,
+                    title,
+                    placeholder
+                });
+                
+                // 添加模拟API响应
+                mockApiResponses();
+            }
+            
+            // 模拟API响应
+            function mockApiResponses() {
+                const originalFetch = window.fetch;
+                window.fetch = function(url, options) {
+                    if (url === '/api/mock/chat') {
+                        return new Promise((resolve) => {
+                            setTimeout(() => {
+                                const data = JSON.parse(options.body);
+                                let response;
+                                
+                                if (data.message.toLowerCase().includes('你好') || 
+                                    data.message.toLowerCase().includes('hi') || 
+                                    data.message.toLowerCase().includes('hello')) {
+                                    response = { reply: '你好！我是AI开发预览助手，有什么可以帮到你的吗？\n\n试试问我：\n- "如何使用这个插件？"\n- "这个插件有什么特性？"\n- "如何自定义主题？"' };
+                                } else if (data.message.toLowerCase().includes('如何使用') || data.message.toLowerCase().includes('怎么用')) {
+                                    response = { reply: '使用AI Agent插件非常简单：\n\n1. 引入插件JS文件\n2. 创建一个AIAgent实例\n3. 配置好API接口地址和其他选项\n\n具体代码可以参考页面底部的示例代码。' };
+                                } else if (data.message.toLowerCase().includes('特性') || data.message.toLowerCase().includes('功能')) {
+                                    response = { reply: 'AI Agent插件的主要特性包括：\n\n1. 跨框架兼容：支持Vue、React、jQuery等多框架项目\n2. 样式隔离：避免与宿主项目样式冲突\n3. 主题定制：支持浅色/深色主题\n4. 位置灵活：支持四角悬浮定位\n5. TypeScript支持：完整的类型定义\n6. 简单易用：引入即可使用，无复杂配置' };
+                                } else if (data.message.toLowerCase().includes('主题')) {
+                                    response = { reply: '您可以通过设置theme选项来自定义主题：\n\n```javascript\nconst aiAgent = new AIAgent({\n  theme: "light" // 可选值: "light" 或 "dark"\n});\n```\n\n如果需要更深度的自定义，您可以覆盖CSS变量或直接修改源码中的样式文件。' };
+                                } else if (data.message.toLowerCase().includes('typescript')) {
+                                    response = { reply: 'AI Agent插件使用TypeScript开发，提供完整的类型定义。使用时，您可以获得良好的代码提示和类型检查：\n\n```typescript\nimport AIAgent from "ai-agent-plugin";\n\nconst options: AIAgentOptions = {\n  apiUrl: "/api/ai/chat",\n  theme: "dark"\n};\n\nconst aiAgent = new AIAgent(options);\n```' };
+                                } else {
+                                    response = { reply: '这是开发预览环境中的模拟回复。您可以修改dev/index.html文件中的mockApiResponses函数来测试不同的响应场景。\n\n试试问我：\n- "如何使用这个插件？"\n- "这个插件有什么特性？"\n- "如何自定义主题？"\n- "TypeScript支持怎么样？"' };
+                                }
+                                
+                                resolve({
+                                    ok: true,
+                                    json: () => Promise.resolve(response)
+                                });
+                            }, 800); // 模拟网络延迟
+                        });
+                    }
+                    return originalFetch(url, options);
+                };
+            }
+            
+            // 初始化时创建Agent
+            setTimeout(function() {
+                if (window.AIAgent) {
+                    createAgent();
+                    
+                    // 绑定应用配置按钮事件
+                    document.getElementById('apply-config').addEventListener('click', createAgent);
+                } else {
+                    console.error('AIAgent未加载，请检查编译是否成功。');
+                }
+            }, 500); // 稍微延迟以确保AIAgent已加载
+        });
+    </script>
+</body>
+</html>
