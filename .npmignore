@@ -1,0 +1,38 @@
+# 开发文件
+src/
+dev/
+examples/
+.idea/
+.vscode/
+
+# 构建配置
+webpack.config.js
+tsconfig.json
+.babelrc
+.eslintrc
+.prettierrc
+
+# Git相关
+.git/
+.github/
+.gitignore
+
+# 杂项文件
+node_modules/
+npm-debug.log
+yarn-debug.log
+yarn-error.log
+*.log
+.DS_Store
+Thumbs.db
+
+# 临时文件和缓存
+*.bak
+*.swp
+*.tmp
+.cache/
+coverage/
+tmp/
+
+# 仅保留dist目录下的构建文件
+# dist 目录将通过 package.json 中的 files 字段指定

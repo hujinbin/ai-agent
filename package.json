@@ -3,10 +3,19 @@
   "version": "1.0.0",
   "description": "跨框架通用的AI Agent前端插件",
   "main": "dist/ai-agent.js",
+  "module": "dist/ai-agent.esm.js",
+  "types": "dist/types/ai-agent.d.ts",
+  "files": [
+    "dist/",
+    "README.md",
+    "LICENSE"
+  ],
   "scripts": {
     "build": "webpack --mode=production",
     "dev": "webpack --mode=development --watch",
     "serve": "webpack serve --mode=development --open",
+    "prepare": "npm run build",
+    "prepublishOnly": "npm test",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "keywords": [
@@ -14,10 +23,22 @@
     "agent",
     "chatbot",
     "umd",
-    "cross-framework"
+    "cross-framework",
+    "typescript",
+    "vue",
+    "react",
+    "jquery"
   ],
-  "author": "",
+  "author": "hujinbin",
   "license": "MIT",
+  "homepage": "https://github.com/hujinbin/ai-agent",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/hujinbin/ai-agent.git"
+  },
+  "bugs": {
+    "url": "https://github.com/hujinbin/ai-agent/issues"
+  },
   "devDependencies": {
     "@babel/core": "^7.28.4",
     "@babel/preset-env": "^7.28.3",
