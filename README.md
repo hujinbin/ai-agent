@@ -1,6 +1,21 @@
 # AI Agent Plugin
 
-一个能在 Vue、React、jQuery 等多框架项目中通用的 AI Agent 前端插件，采用原生 JavaScript + UMD 模块化规范，确保跨框架兼容性。
+一个能在 Vue、React、jQuery 等多框架项目中通用的 AI Agent 前端插件，采用原生 JavaScript + TypeScript + UMD 模块化规范，确保跨框架兼容性。
+
+---
+
+## 🔥 新增预览功能
+
+本项目已集成 TypeScript 示例和多框架预览页面，支持本地快速预览和调试。
+
+- 启动预览命令：
+  ```bash
+  npm run serve
+  ```
+- 默认端口：**9000**
+- 预览入口：
+  - http://localhost:9000/
+---
 
 ## 特性
 
@@ -23,6 +38,18 @@
 ```bash
 npm install ai-agent-plugin --save
 ```
+
+## TypeScript 示例与预览
+
+项目内 `examples/typescript` 目录下，包含完整的 React/Vue/jQuery TypeScript 示例代码和预览页面。
+
+- 进入示例目录并安装依赖：
+  ```bash
+  cd examples/typescript
+  npm install
+  npm start
+  ```
+- 访问对应页面即可预览和调试。
 
 ## 使用方法
 
