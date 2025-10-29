@@ -68,7 +68,9 @@ npm install ai-agent-plugin --save
     $(document).ready(function() {
       // 初始化 AI Agent
       window.aiAgent = new AIAgent({
-        apiUrl: '/api/ai/chat', // 后端 AI 接口
+        apiUrl: '/api/ai/chat',          // 后端 AI 接口
+        secret: 'your-api-secret-key',   // API 密钥（必填）
+        stream: false,                   // 是否启用流式响应
         title: 'jQuery AI 助手',
         position: 'bottom-right'
       });
@@ -90,7 +92,9 @@ function App() {
   useEffect(() => {
     // 初始化 AI Agent
     const aiAgent = new AIAgent({
-      apiUrl: '/api/ai/chat',
+      apiUrl: '/api/ai/chat',          // 后端 AI 接口
+      secret: 'your-api-secret-key',   // API 密钥（必填）
+      stream: true,                    // 启用流式响应
       theme: 'dark',
       title: 'React AI 助手'
     });
@@ -120,7 +124,9 @@ export default {
   mounted() {
     // 初始化 AI Agent
     this.aiAgent = new AIAgent({
-      apiUrl: '/api/ai/chat',
+      apiUrl: '/api/ai/chat',          // 后端 AI 接口
+      secret: 'your-api-secret-key',   // API 密钥（必填）
+      stream: false,                   // 普通响应模式
       title: 'Vue AI 助手',
       position: 'bottom-left'
     });
@@ -135,13 +141,45 @@ export default {
 
 ## 配置选项
 
-| 选项 | 类型 | 默认值 | 说明 |
-|------|------|--------|------|
-| apiUrl | String | '/api/ai/chat' | 后端 AI 接口地址 |
-| theme | String | 'light' | 主题，可选：'light'/'dark' |
-| position | String | 'bottom-right' | 位置，可选：'bottom-right'/'bottom-left'/'top-right'/'top-left' |
-| title | String | 'AI 助手' | 面板标题 |
-| placeholder | String | '请输入问题...' | 输入框占位文本 |
+| 选项 | 类型 | 默认值 | 必填 | 说明 |
+|------|------|--------|------|------|
+| **secret** | String | - | ✅ | API 密钥/令牌，必须提供 |
+| apiUrl | String | '/api/ai/chat' | - | 后端 AI 接口地址 |
+| stream | Boolean | false | - | 是否启用流式响应 |
+| theme | String | 'light' | - | 主题，可选：'light'/'dark' |
+| position | String | 'bottom-right' | - | 位置，可选：'bottom-right'/'bottom-left'/'top-right'/'top-left' |
+| title | String | 'AI 助手' | - | 面板标题 |
+| placeholder | String | '请输入问题...' | - | 输入框占位文本 |
+
+## 后端接口说明
+
+插件支持以下后端接口格式：
+
+### 普通模式接口
+```
+POST /api/ai/chat
+Content-Type: application/json
+Authorization: Bearer your-api-secret-key
+
+{
+  "content": "用户输入的消息"
+}
+```
+
+### 流式模式接口
+```
+POST /api/ai/chat
+Content-Type: application/json
+Authorization: Bearer your-api-secret-key
+
+{
+  "messages": [
+    {"role": "user", "content": "用户输入的消息"}
+  ]
+}
+```
+
+流式响应格式为 Server-Sent Events (SSE)，响应头：`Content-Type: text/event-stream`
 
 ## 方法
 

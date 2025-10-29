@@ -1,0 +1,217 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>AI Agent 插件示例</title>
+    <style>
+        body {
+            font-family: 'PingFang SC', 'Microsoft YaHei', sans-serif;
+            margin: 0;
+            padding: 20px;
+            background-color: #f5f5f5;
+        }
+        .container {
+            max-width: 800px;
+            margin: 0 auto;
+            background: white;
+            padding: 30px;
+            border-radius: 10px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+        }
+        h1 {
+            color: #333;
+            text-align: center;
+            margin-bottom: 30px;
+        }
+        .config-section {
+            background: #f8f9fa;
+            padding: 20px;
+            border-radius: 8px;
+            margin-bottom: 20px;
+        }
+        .form-group {
+            margin-bottom: 15px;
+        }
+        label {
+            display: block;
+            margin-bottom: 5px;
+            font-weight: bold;
+            color: #555;
+        }
+        input, select {
+            width: 100%;
+            padding: 10px;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+            font-size: 14px;
+        }
+        button {
+            background: #007bff;
+            color: white;
+            border: none;
+            padding: 10px 20px;
+            border-radius: 4px;
+            cursor: pointer;
+            font-size: 14px;
+        }
+        button:hover {
+            background: #0056b3;
+        }
+        .demo-section {
+            text-align: center;
+            padding: 20px 0;
+        }
+        .code-example {
+            background: #f8f8f8;
+            padding: 15px;
+            border-radius: 5px;
+            margin-top: 20px;
+            font-family: 'Consolas', 'Monaco', monospace;
+            font-size: 12px;
+            line-height: 1.5;
+            white-space: pre-wrap;
+            overflow-x: auto;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>🤖 AI Agent 插件演示</h1>
+        
+        <div class="config-section">
+            <h3>配置选项</h3>
+            
+            <div class="form-group">
+                <label for="secret">API 密钥 (必填)：</label>
+                <input type="password" id="secret" placeholder="请输入您的API密钥">
+            </div>
+            
+            <div class="form-group">
+                <label for="apiUrl">接口地址：</label>
+                <input type="text" id="apiUrl" value="/api/ai/chat">
+            </div>
+            
+            <div class="form-group">
+                <label for="stream">响应模式：</label>
+                <select id="stream">
+                    <option value="false">普通模式</option>
+                    <option value="true">流式模式</option>
+                </select>
+            </div>
+            
+            <div class="form-group">
+                <label for="theme">主题：</label>
+                <select id="theme">
+                    <option value="light">浅色主题</option>
+                    <option value="dark">深色主题</option>
+                </select>
+            </div>
+            
+            <div class="form-group">
+                <label for="position">位置：</label>
+                <select id="position">
+                    <option value="bottom-right">右下角</option>
+                    <option value="bottom-left">左下角</option>
+                    <option value="top-right">右上角</option>
+                    <option value="top-left">左上角</option>
+                </select>
+            </div>
+        </div>
+        
+        <div class="demo-section">
+            <button onclick="initializeAgent()">初始化 AI Agent</button>
+            <button onclick="destroyAgent()">销毁 AI Agent</button>
+        </div>
+        
+        <div class="code-example" id="codeExample">
+// 示例代码将在这里显示
+        </div>
+    </div>
+
+    <script>
+        let currentAgent = null;
+        
+        function updateCodeExample() {
+            const secret = document.getElementById('secret').value || 'your-api-secret-key';
+            const apiUrl = document.getElementById('apiUrl').value;
+            const stream = document.getElementById('stream').value === 'true';
+            const theme = document.getElementById('theme').value;
+            const position = document.getElementById('position').value;
+            
+            const code = `// AI Agent 配置示例
+const aiAgent = new AIAgent({
+  apiUrl: '${apiUrl}',
+  secret: '${secret}',      // API 密钥（必填）
+  stream: ${stream},                    // 是否启用流式响应
+  theme: '${theme}',        // 主题
+  position: '${position}',  // 位置
+  title: 'AI 助手',
+  placeholder: '请输入您的问题...'
+});
+
+// 销毁插件
+// aiAgent.destroy();`;
+            
+            document.getElementById('codeExample').textContent = code;
+        }
+        
+        function initializeAgent() {
+            const secret = document.getElementById('secret').value;
+            if (!secret) {
+                alert('请先输入API密钥！');
+                return;
+            }
+            
+            // 销毁现有实例
+            if (currentAgent) {
+                currentAgent.destroy();
+            }
+            
+            try {
+                const config = {
+                    apiUrl: document.getElementById('apiUrl').value,
+                    secret: secret,
+                    stream: document.getElementById('stream').value === 'true',
+                    theme: document.getElementById('theme').value,
+                    position: document.getElementById('position').value,
+                    title: 'AI 助手演示',
+                    placeholder: '请输入您的问题...'
+                };
+                
+                // 这里假设 AIAgent 类已经通过 script 标签引入
+                if (typeof AIAgent !== 'undefined') {
+                    currentAgent = new AIAgent(config);
+                    alert('AI Agent 初始化成功！');
+                } else {
+                    alert('AI Agent 插件未正确加载，请检查 script 引用');
+                }
+            } catch (error) {
+                alert('初始化失败：' + error.message);
+            }
+        }
+        
+        function destroyAgent() {
+            if (currentAgent) {
+                currentAgent.destroy();
+                currentAgent = null;
+                alert('AI Agent 已销毁');
+            } else {
+                alert('没有活动的 AI Agent 实例');
+            }
+        }
+        
+        // 监听配置变化，更新代码示例
+        document.addEventListener('DOMContentLoaded', function() {
+            const inputs = ['secret', 'apiUrl', 'stream', 'theme', 'position'];
+            inputs.forEach(id => {
+                document.getElementById(id).addEventListener('change', updateCodeExample);
+            });
+            updateCodeExample();
+        });
+    </script>
+    
+    <!-- 引入 AI Agent 插件 -->
+    <script src="./ai-agent.js"></script>
+</body>
+</html>

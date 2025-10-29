@@ -9,6 +9,18 @@ export interface AIAgentOptions {
   apiUrl?: string;
   
   /**
+   * API 密钥/令牌
+   * @required true
+   */
+  secret?: string;
+  
+  /**
+   * 是否启用流式响应
+   * @default false
+   */
+  stream?: boolean;
+  
+  /**
    * 主题：light / dark
    * @default 'light'
    */
@@ -54,18 +66,56 @@ export interface ChatMessage {
 }
 
 /**
- * API响应接口
+ * API响应接口（普通模式）
  */
 export interface ApiResponse {
-  /**
-   * AI回复内容
-   */
-  reply: string;
-  
-  /**
-   * 其他可能的响应字段
-   */
-  [key: string]: any;
+  code: number;
+  data: {
+    choices: Array<{
+      message: {
+        content: string;
+        role: string;
+      };
+    }>;
+  };
+  msg: string;
+}
+
+/**
+ * 流式响应数据块接口
+ */
+export interface StreamChunk {
+  id: string;
+  object: string;
+  created: number;
+  model: string;
+  choices: Array<{
+    index: number;
+    delta: {
+      role?: string;
+      content?: string;
+    };
+    finish_reason?: string;
+    usage?: {
+      prompt_tokens: number;
+      completion_tokens: number;
+      total_tokens: number;
+    };
+  }>;
+}
+
+/**
+ * 流式请求体接口
+ */
+export interface StreamRequest {
+  messages: ChatMessage[];
+}
+
+/**
+ * 简单请求体接口
+ */
+export interface SimpleRequest {
+  content: string;
 }
 
 /**
