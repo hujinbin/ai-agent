@@ -3,10 +3,11 @@
  */
 export interface AIAgentOptions {
   /**
-   * 后端 AI 接口地址
-   * @default '/api/ai/chat'
+   * 后端站点域名或基础地址，例如 https://example.com 或 http://localhost:8080
+   * 插件会在该 host 下拼接 /ai/chat/completion 或 /ai/chat/stream
+   * @default '' (使用内置本地回退)
    */
-  apiUrl?: string;
+  host?: string;
   
   /**
    * API 密钥/令牌

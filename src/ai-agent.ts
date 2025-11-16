@@ -18,6 +18,18 @@ class AIAgent {
    * 配置选项
    */
   private options: Required<AIAgentOptions>;
+  // 默认后端 host，用于在未配置时自动使用
+  private static DEFAULT_HOST = 'http://localhost:8080';
+  // 计算好的端点
+  private endpoints: {
+    completion: string;
+    stream: string;
+    streamSimple: string;
+    streamConfig: string;
+    session: string;
+    platforms: string;
+    fileExtraction: string;
+  };
   
   /**
    * 对话历史记录
@@ -44,17 +56,17 @@ class AIAgent {
    * @param options 配置选项
    */
   constructor(options: AIAgentOptions = {}) {
-    // 验证必填参数（演示环境除外）
-    const apiUrl = options.apiUrl || '/api/ai/chat';
-    const isDemoMode = apiUrl.includes('/api/mock/') || apiUrl.includes('localhost') || apiUrl.includes('127.0.0.1');
-    
-    if (!options.secret && !isDemoMode) {
+    // 验证必填参数（仅当用户提供了远程 host 时才强制校验 secret）
+    const providedHost = options.host && options.host.trim() !== '';
+    const host = providedHost ? options.host!.trim().replace(/\/+$/, '') : '';
+    const isLocalLike = host.includes('localhost') || host.includes('127.0.0.1') || !providedHost;
+    if (!options.secret && !isLocalLike) {
       throw new Error('AI Agent: secret 参数为必填项，请提供 API 密钥');
     }
-    
+
     // 默认配置 + 用户自定义配置
     this.options = {
-      apiUrl: options.apiUrl || '/api/ai/chat', // 后端 AI 接口地址
+      host: host || '', // 后端站点域名/基础地址，可选
       secret: options.secret || 'demo-key',     // API 密钥（演示模式使用默认值）
       stream: options.stream || false,          // 是否启用流式响应
       theme: options.theme || 'light',          // 主题：light / dark
@@ -63,7 +75,20 @@ class AIAgent {
       title: options.title || 'AI 助手',
       ...options
     };
-    
+    // 计算端点：基于 host 来拼接标准路由 /ai/chat/completion 或 /ai/chat/stream
+    const baseHost = (this.options.host && this.options.host !== '') ? this.options.host : AIAgent.DEFAULT_HOST;
+    const hostNormalize = (p: string) => baseHost.replace(/\/+$/, '') + '/' + p.replace(/^\/+/, '');
+    const chatBase = hostNormalize('api/ai/chat');
+    this.endpoints = {
+      completion: chatBase + '/completion',
+      stream: chatBase + '/stream',
+      streamSimple: chatBase + '/stream-simple',
+      streamConfig: chatBase + '/stream-config',
+      session: hostNormalize('api/ai/session'),
+      platforms: hostNormalize('api/ai/platforms'),
+      fileExtraction: hostNormalize('api/ai/file/extraction')
+    };
+
     this.init(); // 初始化插件
   }
 
@@ -256,8 +281,12 @@ class AIAgent {
     // 显示加载中状态
     const loadingId = this.showLoading(messagesEl);
     
+    // 计算最终 completion URL（优先使用 endpoints）
+    const finalCompletionUrl = this.endpoints.completion;
+    try { console.info('[AIAgent] 普通请求 URL ->', finalCompletionUrl); } catch (e) {}
+
     // 调用普通对话接口
-    fetch(this.options.apiUrl, {
+    fetch(finalCompletionUrl, {
       method: 'POST',
       headers: { 
         'Content-Type': 'application/json',
@@ -334,8 +363,14 @@ class AIAgent {
     const contentEl = aiMessageEl.querySelector('.ai-agent-msg-content') as HTMLElement;
     let fullContent = '';
     
+    // 计算最终流式接口 URL：如果用户直接传入了完整的 stream URL（包含 '/stream'），优先使用
+    const finalStreamUrl = this.endpoints.stream;
+    // 打印调试信息，方便定位请求目标
+    try { console.info('[AIAgent] 流式请求 URL ->', finalStreamUrl); } catch (e) {}
+
     // 调用流式对话接口
-    fetch(this.options.apiUrl, {
+    try { console.info('[AIAgent] 将向流式接口发送 POST 请求，URL ->', finalStreamUrl); } catch (e) {}
+    fetch(finalStreamUrl, {
       method: 'POST',
       headers: { 
         'Content-Type': 'application/json',

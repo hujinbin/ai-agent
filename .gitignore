@@ -3,6 +3,7 @@
 
 # 生产打包文件
 /dist/*.map
+/dist
 
 # 本地环境文件
 .env.local
@@ -28,5 +29,6 @@ yarn-error.log*
 # 临时文件
 .tmp/
 .temp/
+
 
 package-lock.json

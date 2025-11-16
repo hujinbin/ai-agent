@@ -92,8 +92,11 @@ function App() {
   useEffect(() => {
     // 初始化 AI Agent
     const aiAgent = new AIAgent({
-      apiUrl: '/api/ai/chat',          // 后端 AI 接口
-      secret: 'your-api-secret-key',   // API 密钥（必填）
+  apiUrl: '/api/ai/chat',          // 后端 AI 接口（可选）
+  // 如果未提供 apiUrl，插件会回退到内置默认地址：
+  // http://localhost:8080/api/ai/chat
+  // 注意：当您提供远程（非 localhost）apiUrl 时，secret 为必填，用于后端鉴权
+  secret: 'your-api-secret-key',   // API 密钥（当使用真实远端 apiUrl 时必填）
       stream: true,                    // 启用流式响应
       theme: 'dark',
       title: 'React AI 助手'

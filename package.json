@@ -1,6 +1,6 @@
 {
   "name": "ai-agent-plugin",
-  "version": "1.0.0",
+  "version": "0.0.1",
   "description": "跨框架通用的AI Agent前端插件",
   "main": "dist/ai-agent.js",
   "module": "dist/ai-agent.esm.js",

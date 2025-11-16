@@ -257,6 +257,7 @@
 .ai-agent-input-wrap {
   display: flex;
   border-top: 1px solid #eee;
+  height: 36px;
 }
 
 .ai-agent-input {
@@ -276,6 +277,7 @@
   cursor: pointer;
   font-size: 14px;
   transition: background 0.2s;
+  margin-top: 0;
 }
 
 .ai-agent-send:hover { 
