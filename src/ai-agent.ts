@@ -334,7 +334,7 @@ class AIAgent {
         if (err.name === 'TypeError' && err.message.includes('Failed to fetch')) {
           errorMessage = '网络连接失败，请检查网络连接或API地址配置～';
         } else if (err.message.includes('HTTP 404')) {
-          errorMessage = 'API接口地址不存在，请检查apiUrl配置～';
+          errorMessage = 'API接口地址不存在，请检查 host 配置～';
         } else if (err.message.includes('HTTP 401') || err.message.includes('HTTP 403')) {
           errorMessage = 'API密钥验证失败，请检查secret配置～';
         } else if (err.message.includes('HTTP 500')) {

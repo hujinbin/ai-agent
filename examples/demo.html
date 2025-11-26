@@ -88,8 +88,8 @@
             </div>
             
             <div class="form-group">
-                <label for="apiUrl">接口地址：</label>
-                <input type="text" id="apiUrl" value="/api/ai/chat">
+                <label for="apiUrl">Host (域名或主机，例如 http://localhost:8080)</label>
+                <input type="text" id="apiUrl" value="http://localhost:8080">
             </div>
             
             <div class="form-group">
@@ -139,15 +139,15 @@
             const theme = document.getElementById('theme').value;
             const position = document.getElementById('position').value;
             
-            const code = `// AI Agent 配置示例
+                        const code = `// AI Agent 配置示例
 const aiAgent = new AIAgent({
-  apiUrl: '${apiUrl}',
-  secret: '${secret}',      // API 密钥（必填）
-  stream: ${stream},                    // 是否启用流式响应
-  theme: '${theme}',        // 主题
-  position: '${position}',  // 位置
-  title: 'AI 助手',
-  placeholder: '请输入您的问题...'
+    host: '${apiUrl}',
+    secret: '${secret}',      // API 密钥（必填）
+    stream: ${stream},                    // 是否启用流式响应
+    theme: '${theme}',        // 主题
+    position: '${position}',  // 位置
+    title: 'AI 助手',
+    placeholder: '请输入您的问题...'
 });
 
 // 销毁插件
@@ -170,7 +170,7 @@ const aiAgent = new AIAgent({
             
             try {
                 const config = {
-                    apiUrl: document.getElementById('apiUrl').value,
+                    host: document.getElementById('apiUrl').value,
                     secret: secret,
                     stream: document.getElementById('stream').value === 'true',
                     theme: document.getElementById('theme').value,
