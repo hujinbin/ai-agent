@@ -28,6 +28,59 @@ export interface AIAgentOptions {
   theme?: 'light' | 'dark';
   
   /**
+   * 自定义主题色值配置
+   */
+  colors?: {
+    /**
+     * 主色调 (按钮、用户消息气泡等)
+     * @default '#4096ff'
+     */
+    primary?: string;
+    
+    /**
+     * 主色调悬停态
+     * @default '#2e80ff'
+     */
+    primaryHover?: string;
+    
+    /**
+     * 背景色
+     * @default 浅色主题: '#ffffff', 深色主题: '#1e1e1e'
+     */
+    background?: string;
+    
+    /**
+     * 文本颜色
+     * @default 浅色主题: '#333333', 深色主题: '#f0f0f0'
+     */
+    text?: string;
+    
+    /**
+     * 边框颜色
+     * @default 浅色主题: '#eeeeee', 深色主题: '#3c3c3c'
+     */
+    border?: string;
+    
+    /**
+     * AI 消息气泡背景色
+     * @default 浅色主题: '#f5f5f5', 深色主题: '#3c3c3c'
+     */
+    aiMessageBg?: string;
+    
+    /**
+     * 用户消息气泡背景色 (通常使用主色调)
+     * @default 与 primary 相同
+     */
+    userMessageBg?: string;
+    
+    /**
+     * 头部背景色
+     * @default 浅色主题: '#f5f5f5', 深色主题: '#2c2c2c'
+     */
+    headerBg?: string;
+  };
+  
+  /**
    * 位置：bottom-left/right, top-left/right
    * @default 'bottom-right'
    */

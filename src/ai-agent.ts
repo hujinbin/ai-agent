@@ -17,7 +17,7 @@ class AIAgent {
   /**
    * 配置选项
    */
-  private options: Required<AIAgentOptions>;
+  private options: AIAgentOptions;
   // 默认后端 host，用于在未配置时自动使用
   private static DEFAULT_HOST = 'http://localhost:8080';
   // 计算好的端点
@@ -183,7 +183,7 @@ class AIAgent {
    * 但此方法保留，便于动态注入特定样式
    */
   private injectStyles(): void {
-    // 动态计算位置相关的样式
+    // 动态计算位置相关的样式和主题色
     const style = document.createElement('style');
     style.setAttribute('ai-agent-dynamic-styles', '');
     
@@ -205,8 +205,42 @@ class AIAgent {
     
     const position = this.options.position as PositionStyleKey;
     
-    // 动态生成位置相关的样式
+    // 自定义颜色配置
+    let colorVars = '';
+    if (this.options.colors) {
+      const colors = this.options.colors;
+      if (colors.primary) {
+        colorVars += `--ai-agent-primary: ${colors.primary};\n`;
+      }
+      if (colors.primaryHover) {
+        colorVars += `--ai-agent-primary-hover: ${colors.primaryHover};\n`;
+      }
+      if (colors.background) {
+        colorVars += `--ai-agent-bg: ${colors.background};\n`;
+      }
+      if (colors.text) {
+        colorVars += `--ai-agent-text: ${colors.text};\n`;
+      }
+      if (colors.border) {
+        colorVars += `--ai-agent-border: ${colors.border};\n`;
+      }
+      if (colors.aiMessageBg) {
+        colorVars += `--ai-agent-msg-ai-bg: ${colors.aiMessageBg};\n`;
+      }
+      if (colors.userMessageBg) {
+        colorVars += `--ai-agent-msg-user-bg: ${colors.userMessageBg};\n`;
+      } else if (colors.primary) {
+        // 如果没有指定用户消息气泡颜色,使用主色调
+        colorVars += `--ai-agent-msg-user-bg: ${colors.primary};\n`;
+      }
+      if (colors.headerBg) {
+        colorVars += `--ai-agent-header-bg: ${colors.headerBg};\n`;
+      }
+    }
+    
+    // 动态生成位置和颜色相关的样式
     style.textContent = `
+      ${colorVars ? `.ai-agent-theme-${this.options.theme} {\n${colorVars}}` : ''}
       .ai-agent-panel.ai-agent-pos-${position} {
         ${positions[position] || positions['bottom-right']}
       }

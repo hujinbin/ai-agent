@@ -46,6 +46,11 @@
             border-radius: 4px;
             font-size: 14px;
         }
+        input[type="color"] {
+            height: 40px;
+            padding: 5px;
+            cursor: pointer;
+        }
         button {
             background: #007bff;
             color: white;
@@ -102,7 +107,7 @@
             
             <div class="form-group">
                 <label for="theme">主题：</label>
-                <select id="theme">
+                <select id="theme" onchange="updateCodeExample()">
                     <option value="light">浅色主题</option>
                     <option value="dark">深色主题</option>
                 </select>
@@ -110,12 +115,34 @@
             
             <div class="form-group">
                 <label for="position">位置：</label>
-                <select id="position">
+                <select id="position" onchange="updateCodeExample()">
                     <option value="bottom-right">右下角</option>
                     <option value="bottom-left">左下角</option>
                     <option value="top-right">右上角</option>
                     <option value="top-left">左上角</option>
                 </select>
+            </div>
+            
+            <h3 style="margin-top: 20px;">自定义颜色配置</h3>
+            
+            <div class="form-group">
+                <label for="primaryColor">主色调 (按钮、用户消息)：</label>
+                <input type="color" id="primaryColor" value="#4096ff" onchange="updateCodeExample()">
+            </div>
+            
+            <div class="form-group">
+                <label for="backgroundColor">背景色：</label>
+                <input type="color" id="backgroundColor" value="#ffffff" onchange="updateCodeExample()">
+            </div>
+            
+            <div class="form-group">
+                <label for="textColor">文本颜色：</label>
+                <input type="color" id="textColor" value="#333333" onchange="updateCodeExample()">
+            </div>
+            
+            <div class="form-group">
+                <label for="aiMessageBg">AI 消息背景色：</label>
+                <input type="color" id="aiMessageBg" value="#f5f5f5" onchange="updateCodeExample()">
             </div>
         </div>
         
@@ -139,6 +166,11 @@
             const theme = document.getElementById('theme').value;
             const position = document.getElementById('position').value;
             
+            const primaryColor = document.getElementById('primaryColor').value;
+            const backgroundColor = document.getElementById('backgroundColor').value;
+            const textColor = document.getElementById('textColor').value;
+            const aiMessageBg = document.getElementById('aiMessageBg').value;
+            
                         const code = `// AI Agent 配置示例
 const aiAgent = new AIAgent({
     host: '${apiUrl}',
@@ -146,6 +178,12 @@ const aiAgent = new AIAgent({
     stream: ${stream},                    // 是否启用流式响应
     theme: '${theme}',        // 主题
     position: '${position}',  // 位置
+    colors: {
+        primary: '${primaryColor}',
+        background: '${backgroundColor}',
+        text: '${textColor}',
+        aiMessageBg: '${aiMessageBg}'
+    },
     title: 'AI 助手',
     placeholder: '请输入您的问题...'
 });
@@ -169,12 +207,23 @@ const aiAgent = new AIAgent({
             }
             
             try {
+                const primaryColor = document.getElementById('primaryColor').value;
+                const backgroundColor = document.getElementById('backgroundColor').value;
+                const textColor = document.getElementById('textColor').value;
+                const aiMessageBg = document.getElementById('aiMessageBg').value;
+                
                 const config = {
                     host: document.getElementById('apiUrl').value,
                     secret: secret,
                     stream: document.getElementById('stream').value === 'true',
                     theme: document.getElementById('theme').value,
                     position: document.getElementById('position').value,
+                    colors: {
+                        primary: primaryColor,
+                        background: backgroundColor,
+                        text: textColor,
+                        aiMessageBg: aiMessageBg
+                    },
                     title: 'AI 助手演示',
                     placeholder: '请输入您的问题...'
                 };
