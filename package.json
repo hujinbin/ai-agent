@@ -14,7 +14,6 @@
     "build": "webpack --mode=production",
     "dev": "webpack serve --mode=development --watch",
     "serve": "webpack serve --mode=development --open",
-    "prepare": "npm run build",
     "prepublishOnly": "npm run build",
     "test": "echo \"Warning: no test specified\" && exit 0"
   },
