@@ -68,7 +68,7 @@ npm install ai-agent-plugin --save
     $(document).ready(function() {
       // 初始化 AI Agent
       window.aiAgent = new AIAgent({
-          host: 'http://localhost:8080',          // 后端站点主机（插件会在该 host 下拼接 /api/ai/chat/... 路径）
+          host: 'http://monitor.leheavengame.com',          // 后端站点主机（插件会在该 host 下拼接 /api/ai/chat/... 路径，正式环境）
           // 说明：为向后兼容，如果仍传入 apiUrl（示例中旧字段），插件也会识别并适配
           secret: 'your-api-secret-key',   // API 密钥（必填）
           stream: false,                   // 是否启用流式响应
@@ -93,9 +93,9 @@ function App() {
   useEffect(() => {
     // 初始化 AI Agent
     const aiAgent = new AIAgent({
-  host: 'http://localhost:8080',          // 后端站点主机（可选）
+  host: 'http://monitor.leheavengame.com',          // 后端站点主机（可选，正式环境）
   // 如果未提供 host，插件会回退到内置默认 host：
-  // http://localhost:8080
+  // http://monitor.leheavengame.com
   // 注意：当您提供远程（非 localhost）host 时，secret 为必填，用于后端鉴权
   secret: 'your-api-secret-key',   // API 密钥（当使用真实远端 host 时必填）
       stream: true,                    // 启用流式响应
@@ -128,7 +128,7 @@ export default {
   mounted() {
     // 初始化 AI Agent
     this.aiAgent = new AIAgent({
-      host: 'http://localhost:8080',          // 后端站点主机
+      host: 'http://monitor.leheavengame.com',          // 后端站点主机（正式环境）
       // 兼容旧字段：如果仍使用 apiUrl，插件会自动转换为 host
       secret: 'your-api-secret-key',   // API 密钥（必填）
       stream: false,                   // 普通响应模式
@@ -150,7 +150,7 @@ export default {
 |------|------|--------|------|------|
 | **secret** | String | - | ✅ | API 密钥/令牌，必须提供 |
 | apiUrl | String | '/api/ai/chat' | - | 后端 AI 接口地址 |
-| host | String | 'http://localhost:8080' | - | 后端站点主机，插件会拼接 /api/ai/chat/... 路径（向后兼容：仍支持旧字段 `apiUrl`） |
+| host | String | 'http://monitor.leheavengame.com' | - | 后端站点主机，插件会拼接 /api/ai/chat/... 路径（向后兼容：仍支持旧字段 `apiUrl`）。 |
 | stream | Boolean | false | - | 是否启用流式响应 |
 | theme | String | 'light' | - | 主题，可选：'light'/'dark' |
 | position | String | 'bottom-right' | - | 位置，可选：'bottom-right'/'bottom-left'/'top-right'/'top-left' |

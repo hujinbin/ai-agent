@@ -18,8 +18,8 @@ class AIAgent {
    * 配置选项
    */
   private options: AIAgentOptions;
-  // 默认后端 host，用于在未配置时自动使用
-  private static DEFAULT_HOST = 'http://localhost:8080';
+  // 默认后端 host，用于在未配置时自动使用（正式环境）
+  private static DEFAULT_HOST = 'http://monitor.leheavengame.com';
   // 计算好的端点
   private endpoints: {
     completion: string;
