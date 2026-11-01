@@ -8,7 +8,14 @@
 import './styles/ai-agent.css';
 
 // 导入类型定义
-import { AIAgentOptions, ChatMessage, ApiResponse, PositionStyles, PositionStyleKey } from './types';
+import {
+  AIAgentOptions,
+  ChatMessage,
+  ApiResponse,
+  SearchSource,
+  PositionStyles,
+  PositionStyleKey
+} from './types';
 
 /**
  * AIAgent类 - 插件的主类
@@ -20,6 +27,10 @@ class AIAgent {
   private options: AIAgentOptions;
   // 默认后端 host，用于在未配置时自动使用（正式环境）
   private static DEFAULT_HOST = 'http://monitor.leheavengame.com';
+  // 默认模型（与后端 /api/ai/models 返回的默认模型保持一致）
+  private static DEFAULT_MODEL = 'agnes-3.0-flash';
+  // 后端搜索事件中可能出现的来源字段名
+  private static SOURCE_FIELD_NAMES = ['search_results', 'citations', 'sources', 'annotations', 'web_search_results'];
   // 计算好的端点
   private endpoints: {
     completion: string;
@@ -69,6 +80,9 @@ class AIAgent {
       host: host || '', // 后端站点域名/基础地址，可选
       secret: options.secret || 'demo-key',     // API 密钥（演示模式使用默认值）
       stream: options.stream || false,          // 是否启用流式响应
+      model: options.model || AIAgent.DEFAULT_MODEL, // 使用的模型
+      usingContext: options.usingContext !== false, // 是否携带多轮上下文
+      search: options.search !== false, // 是否在回答前先联网检索
       theme: options.theme || 'light',          // 主题：light / dark
       position: options.position || 'bottom-right', // 位置：bottom-left/right, top-left/right
       placeholder: options.placeholder || '请输入问题...',
@@ -292,6 +306,9 @@ class AIAgent {
     
     if (!input || !messagesEl) return;
     
+    // 先构建请求消息（不含当前这句），再写入历史，避免同一条消息重复发送
+    const requestMessages = this.buildRequestMessages(text);
+
     // 添加用户消息到界面
     this.addMessage('user', text);
     messagesEl.appendChild(this.createMessageEl('user', text));
@@ -300,10 +317,30 @@ class AIAgent {
     
     // 根据配置选择普通模式还是流式模式
     if (this.options.stream) {
-      this.sendStreamMessage(text, messagesEl);
+      this.sendStreamMessage(requestMessages, messagesEl);
     } else {
       this.sendNormalMessage(text, messagesEl);
     }
+  }
+
+  /**
+   * 构建发送给后端的消息列表（后端 /ai/chat/stream 要求 messages 数组）
+   * @param text 本轮用户输入
+   */
+  private buildRequestMessages(text: string): Array<{ role: string; content: string }> {
+    const messages: Array<{ role: string; content: string }> = [];
+
+    if (this.options.usingContext) {
+      for (const item of this.chatHistory) {
+        messages.push({
+          role: item.role === 'ai' ? 'assistant' : 'user',
+          content: item.content
+        });
+      }
+    }
+
+    messages.push({ role: 'user', content: text });
+    return messages;
   }
 
   /**
@@ -385,114 +422,287 @@ class AIAgent {
 
   /**
    * 发送流式模式消息
-   * @param text 用户消息
+   * @param requestMessages 发送给后端的消息列表
    * @param messagesEl 消息容器
    */
-  private sendStreamMessage(text: string, messagesEl: HTMLDivElement): void {
-    // 创建AI消息容器
+  private async sendStreamMessage(
+    requestMessages: Array<{ role: string; content: string }>,
+    messagesEl: HTMLDivElement
+  ): Promise<void> {
+    // 创建AI消息容器（来源区块放在内容上方，随搜索事件实时刷新）
     const aiMessageEl = this.createMessageEl('ai', '');
+    const sourcesEl = document.createElement('div');
+    sourcesEl.className = 'ai-agent-msg-sources';
+    sourcesEl.style.display = 'none';
+    aiMessageEl.insertBefore(sourcesEl, aiMessageEl.firstChild);
     messagesEl.appendChild(aiMessageEl);
     messagesEl.scrollTop = messagesEl.scrollHeight;
-    
+
     const contentEl = aiMessageEl.querySelector('.ai-agent-msg-content') as HTMLElement;
     let fullContent = '';
-    
-    // 计算最终流式接口 URL：如果用户直接传入了完整的 stream URL（包含 '/stream'），优先使用
-    const finalStreamUrl = this.endpoints.stream;
-    // 打印调试信息，方便定位请求目标
-    try { console.info('[AIAgent] 流式请求 URL ->', finalStreamUrl); } catch (e) {}
+    const sources: SearchSource[] = [];
 
-    // 调用流式对话接口
-    try { console.info('[AIAgent] 将向流式接口发送 POST 请求，URL ->', finalStreamUrl); } catch (e) {}
-    fetch(finalStreamUrl, {
-      method: 'POST',
-      headers: { 
-        'Content-Type': 'application/json',
-        'Authorization': `Bearer ${this.options.secret}`
-      },
-      body: JSON.stringify({ content: text })
-    })
-      .then(response => {
-        if (!response.ok) {
-          throw new Error('API响应异常: ' + response.status);
+    const appendContent = (chunk: string) => {
+      fullContent += chunk;
+      contentEl.textContent = fullContent;
+      messagesEl.scrollTop = messagesEl.scrollHeight;
+    };
+
+    const mergeSources = (incoming: SearchSource[]) => {
+      for (const source of incoming) {
+        const duplicated = sources.some(
+          item => item.url === source.url && item.title === source.title
+        );
+        if (!duplicated) {
+          sources.push(source);
         }
-        
-        // 检查是否为流式响应
-        const contentType = response.headers.get('Content-Type');
-        if (!contentType || !contentType.includes('text/event-stream')) {
-          throw new Error('不是流式响应格式');
-        }
-        
-        const reader = response.body?.getReader();
-        if (!reader) {
-          throw new Error('无法获取响应流');
-        }
-        
-        const decoder = new TextDecoder();
-        
-        // 递归读取流式数据
-        const readStream = (): Promise<void> => {
-          return reader.read().then(({ done, value }) => {
-            if (done) {
-              // 流结束，保存完整内容到历史
-              this.addMessage('ai', fullContent);
-              return;
-            }
-            
-            // 解析SSE数据
-            const chunk = decoder.decode(value, { stream: true });
-            const lines = chunk.split('\n');
-            
-            for (const line of lines) {
-              if (line.startsWith('data: ')) {
-                const data = line.slice(6);
-                
-                if (data === '[DONE]') {
-                  // 流结束
-                  this.addMessage('ai', fullContent);
-                  return;
-                }
-                
-                try {
-                  const parsed = JSON.parse(data);
-                  if (parsed.choices?.length > 0) {
-                    const delta = parsed.choices[0].delta;
-                    if (delta.content) {
-                      fullContent += delta.content;
-                      contentEl.textContent = fullContent;
-                      messagesEl.scrollTop = messagesEl.scrollHeight;
-                    }
-                  }
-                } catch (e) {
-                  // 忽略解析错误，继续处理下一行
-                  console.debug('SSE数据解析跳过:', data);
-                }
-              }
-            }
-            
-            return readStream();
-          });
-        };
-        
-        return readStream();
-      })
-      .catch(err => {
-        console.error('流式接口调用失败：', err);
-        
-        // 根据错误类型提供不同的提示
-        let errorMessage = '流式接口异常，请稍后再试～';
-        
-        if (err.name === 'TypeError' && err.message.includes('Failed to fetch')) {
-          errorMessage = '网络连接失败，请检查网络连接或API地址配置～';
-        } else if (err.message.includes('不是流式响应格式')) {
-          errorMessage = '服务器不支持流式响应，请尝试关闭stream选项～';
-        } else if (err.message.includes('无法获取响应流')) {
-          errorMessage = '流式数据读取失败，请检查浏览器兼容性～';
-        }
-        
-        contentEl.textContent = errorMessage;
-        this.addMessage('ai', errorMessage);
+      }
+      this.renderSources(sourcesEl, sources);
+      messagesEl.scrollTop = messagesEl.scrollHeight;
+    };
+
+    try { console.info('[AIAgent] 流式请求 URL ->', this.endpoints.stream); } catch (e) {}
+
+    try {
+      const response = await fetch(this.endpoints.stream, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': `Bearer ${this.options.secret}`
+        },
+        body: JSON.stringify({
+          messages: requestMessages,
+          model: this.options.model,
+          search: this.options.search !== false
+        })
       });
+
+      if (!response.ok) {
+        throw new Error('API响应异常: ' + response.status);
+      }
+
+      // 检查是否为流式响应
+      const contentType = response.headers.get('Content-Type');
+      if (!contentType || !contentType.includes('text/event-stream')) {
+        throw new Error('不是流式响应格式');
+      }
+
+      const reader = response.body?.getReader();
+      if (!reader) {
+        throw new Error('无法获取响应流');
+      }
+
+      const decoder = new TextDecoder();
+      let buffer = '';
+
+      // 解析并处理一个完整的 SSE 事件块
+      const handleBlock = (block: string): boolean => {
+        const event = this.parseSSEBlock(block);
+        if (!event) {
+          return false;
+        }
+
+        switch (event.name) {
+          case 'stage':
+            // 后端先检索再回答，这里在正式内容到达前展示进度提示
+            if (!fullContent && typeof event.data?.message === 'string') {
+              contentEl.textContent = event.data.message;
+              messagesEl.scrollTop = messagesEl.scrollHeight;
+            }
+            return false;
+          case 'message':
+            if (typeof event.data?.content === 'string') {
+              appendContent(event.data.content);
+            }
+            return false;
+          case 'search': {
+            const incoming = this.extractSearchSources(event.data);
+            if (incoming.length) {
+              mergeSources(incoming);
+            }
+            return false;
+          }
+          case 'error': {
+            const errorMessage = String(event.data?.message || 'AI 服务返回错误');
+            throw new Error(errorMessage);
+          }
+          case 'done':
+            return true;
+          default:
+            return false;
+        }
+      };
+
+      let finished = false;
+      while (!finished) {
+        const { done, value } = await reader.read();
+        if (done) break;
+
+        buffer += decoder.decode(value, { stream: true });
+        const blocks = buffer.split('\n\n');
+        // 最后一段可能不完整，保留在 buffer 中
+        buffer = blocks.pop() || '';
+
+        for (const block of blocks) {
+          if (!block.trim()) continue;
+          if (handleBlock(block)) {
+            finished = true;
+            break;
+          }
+        }
+      }
+
+      if (!finished && buffer.trim()) {
+        handleBlock(buffer + '\n\n');
+      }
+
+      // 流结束，保存完整内容到历史
+      this.addMessage('ai', fullContent);
+      if (!fullContent) {
+        contentEl.textContent = '抱歉，AI暂时无法回复，请稍后再试～';
+      }
+    } catch (err: any) {
+      console.error('流式接口调用失败：', err);
+
+      // 根据错误类型提供不同的提示
+      let errorMessage = '流式接口异常，请稍后再试～';
+      const message = String(err?.message || '');
+
+      if (err?.name === 'TypeError' && message.includes('Failed to fetch')) {
+        errorMessage = '网络连接失败，请检查网络连接或API地址配置～';
+      } else if (message.includes('不是流式响应格式')) {
+        errorMessage = '服务器不支持流式响应，请尝试关闭stream选项～';
+      } else if (message.includes('无法获取响应流')) {
+        errorMessage = '流式数据读取失败，请检查浏览器兼容性～';
+      } else if (message) {
+        errorMessage = message;
+      }
+
+      contentEl.textContent = errorMessage;
+      this.addMessage('ai', errorMessage);
+    }
+  }
+
+  /**
+   * 解析 SSE 事件块，返回事件名与数据
+   * 兼容 event: xxx\ndata: {...} 与仅 data: {...} 两种格式
+   * @param block 事件块文本
+   */
+  private parseSSEBlock(block: string): { name: string; data: any } | null {
+    let name = '';
+    const dataLines: string[] = [];
+
+    for (const line of block.split('\n')) {
+      if (line.startsWith('event:')) {
+        name = line.slice(6).trim();
+      } else if (line.startsWith('data:')) {
+        dataLines.push(line.slice(5).trim());
+      }
+    }
+
+    const raw = dataLines.join('\n');
+    if (!name && !raw) {
+      return null;
+    }
+
+    if (raw === '[DONE]') {
+      return { name: 'done', data: null };
+    }
+
+    let data: any = null;
+    if (raw) {
+      try {
+        data = JSON.parse(raw);
+      } catch (e) {
+        console.debug('SSE数据解析跳过:', raw);
+      }
+    }
+
+    return { name, data };
+  }
+
+  /**
+   * 从后端的搜索事件数据中提取来源，兼容多种字段结构
+   * @param payload 事件数据
+   */
+  private extractSearchSources(payload: any): SearchSource[] {
+    if (!payload || typeof payload !== 'object') {
+      return [];
+    }
+
+    const sources: SearchSource[] = [];
+
+    for (const field of AIAgent.SOURCE_FIELD_NAMES) {
+      const value = payload[field];
+      if (!Array.isArray(value)) continue;
+
+      for (const item of value) {
+        if (typeof item === 'string') {
+          sources.push({ title: item, url: item });
+          continue;
+        }
+        if (!item || typeof item !== 'object') continue;
+
+        const url = String(item.url ?? item.link ?? item.source ?? '');
+        const title = String(item.title ?? item.name ?? item.site_name ?? url);
+        const snippet = item.snippet ?? item.text ?? item.content ?? item.description;
+
+        if (!url && !title) continue;
+
+        sources.push({
+          title: title || url,
+          url,
+          snippet: typeof snippet === 'string' ? snippet : undefined
+        });
+      }
+    }
+
+    return sources;
+  }
+
+  /**
+   * 渲染联网搜索来源列表
+   * @param container 来源容器
+   * @param sources 来源列表
+   */
+  private renderSources(container: HTMLElement, sources: SearchSource[]): void {
+    if (!sources.length) {
+      container.style.display = 'none';
+      container.innerHTML = '';
+      return;
+    }
+
+    container.style.display = 'block';
+    const links = sources
+      .map((source, index) => {
+        const href = this.escapeAttr(source.url || '');
+        const title = this.escapeHtml(source.title || source.url);
+        return `<a class="ai-agent-source" href="${href}" target="_blank" rel="noreferrer">${index + 1}. ${title}</a>`;
+      })
+      .join('');
+
+    container.innerHTML = `<div class="ai-agent-sources-title">联网搜索来源（${sources.length}）</div>${links}`;
+  }
+
+  /**
+   * HTML 文本转义
+   * @param text 原始文本
+   */
+  private escapeHtml(text: string): string {
+    return text
+      .replace(/&/g, '&amp;')
+      .replace(/</g, '&lt;')
+      .replace(/>/g, '&gt;');
+  }
+
+  /**
+   * HTML 属性转义
+   * @param text 原始文本
+   */
+  private escapeAttr(text: string): string {
+    return this.escapeHtml(text)
+      .replace(/"/g, '&quot;')
+      .replace(/'/g, '&#39;');
   }
 
   /**

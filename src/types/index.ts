@@ -22,6 +22,24 @@ export interface AIAgentOptions {
   stream?: boolean;
   
   /**
+   * 使用的模型名称，需与后端 /ai/models 返回的模型一致
+   * @default 'agnes-3.0-flash'
+   */
+  model?: string;
+  
+  /**
+   * 是否携带多轮上下文（默认携带）
+   * @default true
+   */
+  usingContext?: boolean;
+
+  /**
+   * 是否在回答前让后端先联网检索资料（默认开启）
+   * @default true
+   */
+  search?: boolean;
+  
+  /**
    * 主题：light / dark
    * @default 'light'
    */
@@ -102,6 +120,24 @@ export interface AIAgentOptions {
    * 其他自定义选项
    */
   [key: string]: any;
+}
+
+/**
+ * 联网搜索来源
+ */
+export interface SearchSource {
+  /**
+   * 来源标题
+   */
+  title: string;
+  /**
+   * 来源链接
+   */
+  url: string;
+  /**
+   * 来源摘要
+   */
+  snippet?: string;
 }
 
 /**

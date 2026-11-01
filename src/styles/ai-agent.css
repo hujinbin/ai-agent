@@ -304,6 +304,42 @@
   background: var(--ai-agent-primary-hover); 
 }
 
+/* 联网搜索来源 */
+.ai-agent-msg-ai {
+  flex-direction: column;
+  align-items: flex-start;
+}
+
+.ai-agent-msg-sources {
+  max-width: 80%;
+  margin-bottom: 6px;
+  padding: 8px 12px;
+  border: 1px solid var(--ai-agent-border);
+  border-radius: 12px;
+  background: var(--ai-agent-msg-ai-bg);
+  font-size: 12px;
+}
+
+.ai-agent-sources-title {
+  margin-bottom: 4px;
+  font-weight: 600;
+  opacity: 0.75;
+}
+
+.ai-agent-source {
+  display: block;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  color: var(--ai-agent-primary);
+  text-decoration: none;
+  line-height: 1.6;
+}
+
+.ai-agent-source:hover {
+  text-decoration: underline;
+}
+
 /* 响应式适配 */
 @media (max-width: 480px) {
   .ai-agent-panel {

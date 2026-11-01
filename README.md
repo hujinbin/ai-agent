@@ -152,6 +152,9 @@ export default {
 | apiUrl | String | '/api/ai/chat' | - | 后端 AI 接口地址 |
 | host | String | 'http://monitor.leheavengame.com' | - | 后端站点主机，插件会拼接 /api/ai/chat/... 路径（向后兼容：仍支持旧字段 `apiUrl`）。 |
 | stream | Boolean | false | - | 是否启用流式响应 |
+| model | String | 'agnes-3.0-flash' | - | 使用的模型名称，需与后端 `/api/ai/models` 返回的模型一致 |
+| usingContext | Boolean | true | - | 是否携带多轮对话上下文 |
+| search | Boolean | true | - | 是否在回答前先让后端联网检索资料 |
 | theme | String | 'light' | - | 主题，可选：'light'/'dark' |
 | position | String | 'bottom-right' | - | 位置，可选：'bottom-right'/'bottom-left'/'top-right'/'top-left' |
 | title | String | 'AI 助手' | - | 面板标题 |
@@ -181,11 +184,22 @@ Authorization: Bearer your-api-secret-key
 {
   "messages": [
     {"role": "user", "content": "用户输入的消息"}
-  ]
+  ],
+  "model": "agnes-3.0-flash",
+  "search": true
 }
 ```
 
 流式响应格式为 Server-Sent Events (SSE)，响应头：`Content-Type: text/event-stream`
+
+| 事件 | 数据 | 说明 |
+|------|------|------|
+| connect | `{"message":"连接成功","model":"agnes-3.0-flash"}` | 连接建立 |
+| stage | `{"stage":"search_start","message":"正在联网检索最新资料…"}` | 处理阶段提示，插件在回答出字前展示 |
+| message | `{"content":"文字片段"}` | 回复内容片段，插件实时追加 |
+| search | `{"search_results":[...]}` | 联网检索来源（后端先检索再回答），插件实时渲染为来源列表 |
+| error | `{"message":"错误信息"}` | 服务端错误 |
+| done | `{}` | 回复结束 |
 
 ## 方法
 
