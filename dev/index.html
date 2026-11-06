@@ -132,14 +132,14 @@
         <div class="demo-section">
             <h2>实时预览</h2>
             <p>当前显示的AI Agent插件是根据上面的配置生成的。您可以更改配置并点击"应用配置"按钮来查看不同配置下的效果。</p>
-            <p>在此页面中，所有API调用都会返回模拟数据，可以通过修改开发文件来测试不同的响应情况。</p>
+            <p>此页面通过 HTTPS 请求 AI 服务；联网使用时需要后端允许当前开发页面跨域访问。</p>
         </div>
 
         <div class="demo-section">
             <h2>使用示例</h2>
             <pre><code>// 初始化 AI Agent
 const aiAgent = new AIAgent({
-  apiUrl: '/api/ai/chat',
+  host: 'https://monitor.leheavengame.com',
   theme: 'light',
   position: 'bottom-right',
   title: '开发预览助手',
@@ -168,7 +168,7 @@ const aiAgent = new AIAgent({
                 // 更新代码示例
                 document.querySelector('pre code').textContent = `// 初始化 AI Agent
 const aiAgent = new AIAgent({
-  apiUrl: '/api/ai/chat',
+  host: 'https://monitor.leheavengame.com',
   secret: 'your-api-secret-key', // 必填：API密钥
   theme: '${theme}',
   position: '${position}',
@@ -178,7 +178,7 @@ const aiAgent = new AIAgent({
 
                 // 创建 AI Agent 实例
                 aiAgent = new AIAgent({
-                    apiUrl: '/api/mock/chat',
+                    host: 'https://monitor.leheavengame.com',
                     secret: 'demo-secret-key', // 演示用密钥
                     theme,
                     position,

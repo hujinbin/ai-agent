@@ -16,13 +16,16 @@ describe('工具函数和边界情况', () => {
     test('应该正确转义HTML特殊字符', () => {
       new AIAgent({
         host: 'http://localhost:8080',
-        secret: 'test-key'
+        secret: 'test-key',
+        search: false,
+        usingContext: false
       });
 
-      const input = document.querySelector('.ai-agent-input') as HTMLInputElement;
+      const input = document.querySelector('.ai-agent-input') as HTMLTextAreaElement;
       const sendBtn = document.querySelector('.ai-agent-send') as HTMLButtonElement;
 
       input.value = '<script>alert("XSS")</script>';
+      input.dispatchEvent(new Event('input'));
       sendBtn.click();
 
       const messagesEl = document.querySelector('.ai-agent-messages');
@@ -36,15 +39,17 @@ describe('工具函数和边界情况', () => {
     test('应该正确处理换行符', () => {
       new AIAgent({
         host: 'http://localhost:8080',
-        secret: 'test-key'
+        secret: 'test-key',
+        search: false,
+        usingContext: false
       });
 
-      // 注意：input元素不支持多行，这个测试主要测试消息显示时的换行处理
-      // 我们直接创建消息元素来测试
-      const input = document.querySelector('.ai-agent-input') as HTMLInputElement;
+      // 输入多行内容后发送，保留消息中的换行。
+      const input = document.querySelector('.ai-agent-input') as HTMLTextAreaElement;
       const sendBtn = document.querySelector('.ai-agent-send') as HTMLButtonElement;
 
-      input.value = '测试消息';
+      input.value = '测试消息\n第二行';
+      input.dispatchEvent(new Event('input'));
       sendBtn.click();
 
       // 检查消息是否正常添加
@@ -59,7 +64,9 @@ describe('工具函数和边界情况', () => {
     test('应该正确处理带尾部斜杠的host', () => {
       const agent = new AIAgent({
         host: 'http://localhost:8080/',
-        secret: 'test-key'
+        secret: 'test-key',
+        search: false,
+        usingContext: false
       });
 
       expect(agent).toBeDefined();
@@ -68,7 +75,9 @@ describe('工具函数和边界情况', () => {
     test('应该正确处理不带尾部斜杠的host', () => {
       const agent = new AIAgent({
         host: 'http://localhost:8080',
-        secret: 'test-key'
+        secret: 'test-key',
+        search: false,
+        usingContext: false
       });
 
       expect(agent).toBeDefined();
@@ -77,7 +86,9 @@ describe('工具函数和边界情况', () => {
     test('应该正确处理多个尾部斜杠', () => {
       const agent = new AIAgent({
         host: 'http://localhost:8080///',
-        secret: 'test-key'
+        secret: 'test-key',
+        search: false,
+        usingContext: false
       });
 
       expect(agent).toBeDefined();
@@ -88,7 +99,9 @@ describe('工具函数和边界情况', () => {
     test('应该限制历史记录长度', async () => {
       new AIAgent({
         host: 'http://localhost:8080',
-        secret: 'test-key'
+        secret: 'test-key',
+        search: false,
+        usingContext: false
       });
 
       global.fetch = jest.fn().mockResolvedValue({
@@ -103,12 +116,13 @@ describe('工具函数和边界情况', () => {
         })
       });
 
-      const input = document.querySelector('.ai-agent-input') as HTMLInputElement;
+      const input = document.querySelector('.ai-agent-input') as HTMLTextAreaElement;
       const sendBtn = document.querySelector('.ai-agent-send') as HTMLButtonElement;
 
       // 发送超过20条消息
       for (let i = 0; i < 25; i++) {
         input.value = `消息 ${i}`;
+        input.dispatchEvent(new Event('input'));
         sendBtn.click();
         await new Promise(resolve => setTimeout(resolve, 50));
       }
@@ -174,7 +188,9 @@ describe('工具函数和边界情况', () => {
     test('应该处理格式错误的API响应', async () => {
       new AIAgent({
         host: 'http://localhost:8080',
-        secret: 'test-key'
+        secret: 'test-key',
+        search: false,
+        usingContext: false
       });
 
       global.fetch = jest.fn().mockResolvedValue({
@@ -185,10 +201,11 @@ describe('工具函数和边界情况', () => {
         })
       });
 
-      const input = document.querySelector('.ai-agent-input') as HTMLInputElement;
+      const input = document.querySelector('.ai-agent-input') as HTMLTextAreaElement;
       const sendBtn = document.querySelector('.ai-agent-send') as HTMLButtonElement;
 
       input.value = '测试问题';
+      input.dispatchEvent(new Event('input'));
       sendBtn.click();
 
       await new Promise(resolve => setTimeout(resolve, 100));
@@ -205,7 +222,9 @@ describe('工具函数和边界情况', () => {
     test('应该处理HTTP 404错误', async () => {
       new AIAgent({
         host: 'http://localhost:8080',
-        secret: 'test-key'
+        secret: 'test-key',
+        search: false,
+        usingContext: false
       });
 
       global.fetch = jest.fn().mockResolvedValue({
@@ -214,10 +233,11 @@ describe('工具函数和边界情况', () => {
         statusText: 'Not Found'
       });
 
-      const input = document.querySelector('.ai-agent-input') as HTMLInputElement;
+      const input = document.querySelector('.ai-agent-input') as HTMLTextAreaElement;
       const sendBtn = document.querySelector('.ai-agent-send') as HTMLButtonElement;
 
       input.value = '测试问题';
+      input.dispatchEvent(new Event('input'));
       sendBtn.click();
 
       await new Promise(resolve => setTimeout(resolve, 100));
@@ -233,7 +253,9 @@ describe('工具函数和边界情况', () => {
     test('应该处理HTTP 401认证错误', async () => {
       new AIAgent({
         host: 'http://localhost:8080',
-        secret: 'test-key'
+        secret: 'test-key',
+        search: false,
+        usingContext: false
       });
 
       global.fetch = jest.fn().mockResolvedValue({
@@ -242,10 +264,11 @@ describe('工具函数和边界情况', () => {
         statusText: 'Unauthorized'
       });
 
-      const input = document.querySelector('.ai-agent-input') as HTMLInputElement;
+      const input = document.querySelector('.ai-agent-input') as HTMLTextAreaElement;
       const sendBtn = document.querySelector('.ai-agent-send') as HTMLButtonElement;
 
       input.value = '测试问题';
+      input.dispatchEvent(new Event('input'));
       sendBtn.click();
 
       await new Promise(resolve => setTimeout(resolve, 100));
@@ -279,13 +302,16 @@ describe('工具函数和边界情况', () => {
     test('应该忽略只包含空格的消息', () => {
       new AIAgent({
         host: 'http://localhost:8080',
-        secret: 'test-key'
+        secret: 'test-key',
+        search: false,
+        usingContext: false
       });
 
-      const input = document.querySelector('.ai-agent-input') as HTMLInputElement;
+      const input = document.querySelector('.ai-agent-input') as HTMLTextAreaElement;
       const sendBtn = document.querySelector('.ai-agent-send') as HTMLButtonElement;
 
       input.value = '     ';
+      input.dispatchEvent(new Event('input'));
       sendBtn.click();
 
       const messagesEl = document.querySelector('.ai-agent-messages');
@@ -297,13 +323,16 @@ describe('工具函数和边界情况', () => {
     test('应该忽略空字符串消息', () => {
       new AIAgent({
         host: 'http://localhost:8080',
-        secret: 'test-key'
+        secret: 'test-key',
+        search: false,
+        usingContext: false
       });
 
-      const input = document.querySelector('.ai-agent-input') as HTMLInputElement;
+      const input = document.querySelector('.ai-agent-input') as HTMLTextAreaElement;
       const sendBtn = document.querySelector('.ai-agent-send') as HTMLButtonElement;
 
       input.value = '';
+      input.dispatchEvent(new Event('input'));
       sendBtn.click();
 
       const messagesEl = document.querySelector('.ai-agent-messages');

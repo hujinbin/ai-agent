@@ -1,7 +1,19 @@
 /**
  * AI Agent 插件的配置选项接口
  */
+export interface MCPServerConfig {
+  id: string;
+  name?: string;
+  url: string;
+  token?: string;
+}
+
 export interface AIAgentOptions {
+  /** 浏览器直连的 MCP 配置，令牌对浏览器可见，服务需要允许跨域访问 */
+  mcpServers?: MCPServerConfig[];
+  /** 显示 MCP 扩展选择器 */
+  mcp?: boolean;
+
   /**
    * 后端站点域名或基础地址，例如 https://example.com 或 http://localhost:8080
    * 插件会在该 host 下拼接 /ai/chat/completion 或 /ai/chat/stream

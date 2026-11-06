@@ -68,7 +68,7 @@ npm install ai-agent-plugin --save
     $(document).ready(function() {
       // 初始化 AI Agent
       window.aiAgent = new AIAgent({
-          host: 'http://monitor.leheavengame.com',          // 后端站点主机（插件会在该 host 下拼接 /api/ai/chat/... 路径，正式环境）
+          host: 'https://monitor.leheavengame.com',          // 后端站点主机（插件会在该 host 下拼接 /api/ai/chat/... 路径，正式环境）
           // 说明：为向后兼容，如果仍传入 apiUrl（示例中旧字段），插件也会识别并适配
           secret: 'your-api-secret-key',   // API 密钥（必填）
           stream: false,                   // 是否启用流式响应
@@ -93,9 +93,9 @@ function App() {
   useEffect(() => {
     // 初始化 AI Agent
     const aiAgent = new AIAgent({
-  host: 'http://monitor.leheavengame.com',          // 后端站点主机（可选，正式环境）
+  host: 'https://monitor.leheavengame.com',          // 后端站点主机（可选，正式环境）
   // 如果未提供 host，插件会回退到内置默认 host：
-  // http://monitor.leheavengame.com
+  // https://monitor.leheavengame.com
   // 注意：当您提供远程（非 localhost）host 时，secret 为必填，用于后端鉴权
   secret: 'your-api-secret-key',   // API 密钥（当使用真实远端 host 时必填）
       stream: true,                    // 启用流式响应
@@ -128,7 +128,7 @@ export default {
   mounted() {
     // 初始化 AI Agent
     this.aiAgent = new AIAgent({
-      host: 'http://monitor.leheavengame.com',          // 后端站点主机（正式环境）
+      host: 'https://monitor.leheavengame.com',          // 后端站点主机（正式环境）
       // 兼容旧字段：如果仍使用 apiUrl，插件会自动转换为 host
       secret: 'your-api-secret-key',   // API 密钥（必填）
       stream: false,                   // 普通响应模式
@@ -150,7 +150,7 @@ export default {
 |------|------|--------|------|------|
 | **secret** | String | - | ✅ | API 密钥/令牌，必须提供 |
 | apiUrl | String | '/api/ai/chat' | - | 后端 AI 接口地址 |
-| host | String | 'http://monitor.leheavengame.com' | - | 后端站点主机，插件会拼接 /api/ai/chat/... 路径（向后兼容：仍支持旧字段 `apiUrl`）。 |
+| host | String | 'https://monitor.leheavengame.com' | - | 后端站点主机，插件会拼接 /api/ai/chat/... 路径（向后兼容：仍支持旧字段 `apiUrl`）。 |
 | stream | Boolean | false | - | 是否启用流式响应 |
 | model | String | 'agnes-3.0-flash' | - | 使用的模型名称，需与后端 `/api/ai/models` 返回的模型一致 |
 | usingContext | Boolean | true | - | 是否携带多轮对话上下文 |
@@ -201,11 +201,37 @@ Authorization: Bearer your-api-secret-key
 | error | `{"message":"错误信息"}` | 服务端错误 |
 | done | `{}` | 回复结束 |
 
-## 方法
+## 客服文本与 MCP 扩展
+
+```js
+const agent = new AIAgent({
+  host: 'https://实际AI服务域名',
+  secret: 'site-session-token',
+  stream: true,
+  search: false,
+  usingContext: true,
+  mcpServers: [
+    { id: 'articles', name: '文章库', url: 'https://实际MCP域名/mcp', token: '浏览器可见的查询令牌' }
+  ]
+});
+```
+
+0.0.2 起插件专用于文本客服。`search` 独立控制最终回答是否联网，默认 `true`。`mcpServers` 可省略，配置后由浏览器直连查询服务。`mcp: false` 可禁用已配置的 MCP。旧 `media` 参数会被忽略。
+
+`stream: true` 时逐片显示回复。`stream: false` 时在完成后整段显示，为使联网与上下文生效，内部仍通过 `/api/ai/chat/stream` 获取结果。明确同时关闭 `stream`、`search`、`usingContext` 且使用默认模型、没有 MCP 时保留 `/api/ai/chat/completion` 普通 JSON 兼容入口。
+
+插件负责初始化 MCP、发现工具、通过普通 AI 文本请求选择工具、调用工具，再将查询参考资料交给 AI 生成回复。工具规划固定关闭联网，最终客服回答按 `search` 配置执行。文章来源支持新标签页打开。
+
+每项 MCP 配置需要唯一的 `id` 和完整 `url`，可选 `name` 和 Bearer `token`。最多启用四个服务。浏览器配置的 token 对用户可见，适合使用公开客户端的只读查询凭据。HTTPS 网站通过 HTTPS MCP 地址接入，服务需要配置允许插件所在网站跨域访问。
+
+调用 `agent.cancel()` 或点击“停止”可取消当前回复并保留已收到的文字。`destroy()` 会取消进行中的 AI 和 MCP 请求并清理界面。
+
+## 实例方法
 
 | 方法 | 说明 |
 |------|------|
-| destroy() | 销毁插件，清理 DOM 和事件 |
+| destroy() | 取消请求并销毁插件，清理 DOM 和事件 |
+| cancel() | 停止当前回复并保留已收到的文本 |
 | togglePanel() | 切换面板显示/隐藏 |
 | closePanel() | 关闭面板 |
 | sendMessage(text) | 发送消息到 AI 接口 |

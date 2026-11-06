@@ -78,7 +78,7 @@ describe('AIAgent', () => {
       const header = document.querySelector('.ai-agent-panel-header h3');
       expect(header?.textContent).toBe('自定义标题');
 
-      const input = document.querySelector('.ai-agent-input') as HTMLInputElement;
+      const input = document.querySelector('.ai-agent-input') as HTMLTextAreaElement;
       expect(input?.placeholder).toBe('请输入...');
     });
   });
@@ -99,7 +99,7 @@ describe('AIAgent', () => {
 
       button.click();
 
-      expect(panel.style.display).toBe('block');
+      expect(panel.style.display).toBe('flex');
     });
 
     test('点击关闭按钮应该关闭面板', () => {
@@ -109,7 +109,7 @@ describe('AIAgent', () => {
 
       // 先打开面板
       button.click();
-      expect(panel.style.display).toBe('block');
+      expect(panel.style.display).toBe('flex');
 
       // 点击关闭
       closeBtn.click();
@@ -122,7 +122,7 @@ describe('AIAgent', () => {
 
       // 第一次点击打开
       button.click();
-      expect(panel.style.display).toBe('block');
+      expect(panel.style.display).toBe('flex');
 
       // 第二次点击关闭
       button.click();
@@ -146,13 +146,14 @@ describe('AIAgent', () => {
     });
 
     test('应该在输入框按Enter时发送消息', () => {
-      const input = document.querySelector('.ai-agent-input') as HTMLInputElement;
+      const input = document.querySelector('.ai-agent-input') as HTMLTextAreaElement;
       const messagesEl = document.querySelector('.ai-agent-messages');
 
       input.value = '测试消息';
+      input.dispatchEvent(new Event('input'));
       
       // 模拟按下Enter键
-      const event = new KeyboardEvent('keypress', { key: 'Enter' });
+      const event = new KeyboardEvent('keydown', { key: 'Enter' });
       input.dispatchEvent(event);
 
       // 检查消息是否添加到界面
@@ -162,11 +163,12 @@ describe('AIAgent', () => {
     });
 
     test('应该在点击发送按钮时发送消息', () => {
-      const input = document.querySelector('.ai-agent-input') as HTMLInputElement;
+      const input = document.querySelector('.ai-agent-input') as HTMLTextAreaElement;
       const sendBtn = document.querySelector('.ai-agent-send') as HTMLButtonElement;
       const messagesEl = document.querySelector('.ai-agent-messages');
 
       input.value = '测试消息';
+      input.dispatchEvent(new Event('input'));
       sendBtn.click();
 
       // 检查消息是否添加到界面
@@ -176,11 +178,12 @@ describe('AIAgent', () => {
     });
 
     test('应该忽略空消息', () => {
-      const input = document.querySelector('.ai-agent-input') as HTMLInputElement;
+      const input = document.querySelector('.ai-agent-input') as HTMLTextAreaElement;
       const sendBtn = document.querySelector('.ai-agent-send') as HTMLButtonElement;
       const messagesEl = document.querySelector('.ai-agent-messages');
 
       input.value = '   '; // 只有空格
+      input.dispatchEvent(new Event('input'));
       sendBtn.click();
 
       // 不应该添加消息
@@ -189,10 +192,11 @@ describe('AIAgent', () => {
     });
 
     test('发送消息后应该清空输入框', () => {
-      const input = document.querySelector('.ai-agent-input') as HTMLInputElement;
+      const input = document.querySelector('.ai-agent-input') as HTMLTextAreaElement;
       const sendBtn = document.querySelector('.ai-agent-send') as HTMLButtonElement;
 
       input.value = '测试消息';
+      input.dispatchEvent(new Event('input'));
       sendBtn.click();
 
       expect(input.value).toBe('');
@@ -204,7 +208,9 @@ describe('AIAgent', () => {
       new AIAgent({
         host: 'http://localhost:8080',
         secret: 'test-key',
-        stream: false
+        stream: false,
+        search: false,
+        usingContext: false
       });
 
       global.fetch = jest.fn();
@@ -233,10 +239,11 @@ describe('AIAgent', () => {
         json: async () => mockResponse
       });
 
-      const input = document.querySelector('.ai-agent-input') as HTMLInputElement;
+      const input = document.querySelector('.ai-agent-input') as HTMLTextAreaElement;
       const sendBtn = document.querySelector('.ai-agent-send') as HTMLButtonElement;
 
       input.value = '测试问题';
+      input.dispatchEvent(new Event('input'));
       sendBtn.click();
 
       // 等待一小段时间让fetch完成
@@ -274,10 +281,11 @@ describe('AIAgent', () => {
         json: async () => mockResponse
       });
 
-      const input = document.querySelector('.ai-agent-input') as HTMLInputElement;
+      const input = document.querySelector('.ai-agent-input') as HTMLTextAreaElement;
       const sendBtn = document.querySelector('.ai-agent-send') as HTMLButtonElement;
 
       input.value = '测试问题';
+      input.dispatchEvent(new Event('input'));
       sendBtn.click();
 
       // 等待API响应
@@ -295,10 +303,11 @@ describe('AIAgent', () => {
         new Error('Failed to fetch')
       );
 
-      const input = document.querySelector('.ai-agent-input') as HTMLInputElement;
+      const input = document.querySelector('.ai-agent-input') as HTMLTextAreaElement;
       const sendBtn = document.querySelector('.ai-agent-send') as HTMLButtonElement;
 
       input.value = '测试问题';
+      input.dispatchEvent(new Event('input'));
       sendBtn.click();
 
       // 等待错误处理
@@ -316,10 +325,11 @@ describe('AIAgent', () => {
         () => new Promise(resolve => setTimeout(resolve, 1000))
       );
 
-      const input = document.querySelector('.ai-agent-input') as HTMLInputElement;
+      const input = document.querySelector('.ai-agent-input') as HTMLTextAreaElement;
       const sendBtn = document.querySelector('.ai-agent-send') as HTMLButtonElement;
 
       input.value = '测试问题';
+      input.dispatchEvent(new Event('input'));
       sendBtn.click();
 
       // 检查加载动画
