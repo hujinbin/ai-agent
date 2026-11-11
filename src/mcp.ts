@@ -1,6 +1,8 @@
 import { readAIStream } from './stream';
 import { MCPServerConfig, SearchSource } from './types';
 
+const packageVersion: string = require('../package.json').version;
+
 export interface MCPMessage { role: string; content: string }
 interface MCPTool { name: string; description?: string; inputSchema: unknown }
 
@@ -62,7 +64,7 @@ class BrowserMCPClient {
   }
 
   async tools(): Promise<MCPTool[]> {
-    const initialized = await this.rpc('initialize', { protocolVersion: this.protocol, capabilities: {}, clientInfo: { name: 'ai-agent-plugin', version: '0.0.2' } });
+    const initialized = await this.rpc('initialize', { protocolVersion: this.protocol, capabilities: {}, clientInfo: { name: 'ai-agent-plugin', version: packageVersion } });
     this.protocol = initialized.protocolVersion || this.protocol;
     await this.rpc('notifications/initialized', undefined, true);
     const tools: MCPTool[] = [];

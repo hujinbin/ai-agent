@@ -153,8 +153,8 @@ export default {
 | host | String | 'https://monitor.leheavengame.com' | - | 后端站点主机，插件会拼接 /api/ai/chat/... 路径（向后兼容：仍支持旧字段 `apiUrl`）。 |
 | stream | Boolean | false | - | 是否启用流式响应 |
 | model | String | 'agnes-3.0-flash' | - | 使用的模型名称，需与后端 `/api/ai/models` 返回的模型一致 |
-| usingContext | Boolean | true | - | 是否携带多轮对话上下文 |
-| search | Boolean | true | - | 是否在回答前先让后端联网检索资料 |
+| usingContext | Boolean | true | - | 是否携带最近十轮已完成的对话上下文 |
+| search | Boolean | true | - | 是否允许后端根据问题和上下文决定联网检索 |
 | theme | String | 'light' | - | 主题，可选：'light'/'dark' |
 | position | String | 'bottom-right' | - | 位置，可选：'bottom-right'/'bottom-left'/'top-right'/'top-left' |
 | title | String | 'AI 助手' | - | 面板标题 |
@@ -195,9 +195,9 @@ Authorization: Bearer your-api-secret-key
 | 事件 | 数据 | 说明 |
 |------|------|------|
 | connect | `{"message":"连接成功","model":"agnes-3.0-flash"}` | 连接建立 |
-| stage | `{"stage":"search_start","message":"正在联网检索最新资料…"}` | 处理阶段提示，插件在回答出字前展示 |
+| stage | `{"stage":"search_planning","message":"正在理解问题并判断是否需要联网…"}` | 处理阶段提示，支持搜索规划、跳过检索和继续生成等阶段 |
 | message | `{"content":"文字片段"}` | 回复内容片段，插件实时追加 |
-| search | `{"search_results":[...]}` | 联网检索来源（后端先检索再回答），插件实时渲染为来源列表 |
+| search | `{"search_results":[...]}` | 后端决定检索时返回参考来源，插件实时渲染为来源列表 |
 | error | `{"message":"错误信息"}` | 服务端错误 |
 | done | `{}` | 回复结束 |
 
@@ -216,7 +216,7 @@ const agent = new AIAgent({
 });
 ```
 
-0.0.2 起插件专用于文本客服。`search` 独立控制最终回答是否联网，默认 `true`。`mcpServers` 可省略，配置后由浏览器直连查询服务。`mcp: false` 可禁用已配置的 MCP。旧 `media` 参数会被忽略。
+0.0.2 起插件专用于文本客服。`search` 控制是否允许后端结合当前问题和已完成的对话上下文决定联网检索，默认 `true`。`false` 关闭联网检索。`mcpServers` 可省略，配置后由浏览器直连查询服务。`mcp: false` 可禁用已配置的 MCP。旧 `media` 参数会被忽略。
 
 `stream: true` 时逐片显示回复。`stream: false` 时在完成后整段显示，为使联网与上下文生效，内部仍通过 `/api/ai/chat/stream` 获取结果。明确同时关闭 `stream`、`search`、`usingContext` 且使用默认模型、没有 MCP 时保留 `/api/ai/chat/completion` 普通 JSON 兼容入口。
 
@@ -225,6 +225,8 @@ const agent = new AIAgent({
 每项 MCP 配置需要唯一的 `id` 和完整 `url`，可选 `name` 和 Bearer `token`。最多启用四个服务。浏览器配置的 token 对用户可见，适合使用公开客户端的只读查询凭据。HTTPS 网站通过 HTTPS MCP 地址接入，服务需要配置允许插件所在网站跨域访问。
 
 调用 `agent.cancel()` 或点击“停止”可取消当前回复并保留已收到的文字。`destroy()` 会取消进行中的 AI 和 MCP 请求并清理界面。
+
+多轮上下文由最近十轮完整的用户问题与 AI 回复组成。失败或停止的本轮保留在页面，后续请求沿用已完成的对话历史。欢迎语、处理阶段和 MCP 参考资料单独展示与传递。
 
 ## 实例方法
 

@@ -96,7 +96,7 @@ class AIAgent {
       stream: options.stream || false,          // 是否启用流式响应
       model: options.model || AIAgent.DEFAULT_MODEL, // 使用的模型
       usingContext: options.usingContext !== false, // 是否携带多轮上下文
-      search: options.search !== false, // 是否在回答前先联网检索
+      search: options.search !== false, // 是否允许后端根据对话判断并联网检索
       theme: options.theme || 'light',          // 主题：light / dark
       position: options.position || 'bottom-right', // 位置：bottom-left/right, top-left/right
       placeholder: options.placeholder || '请输入问题...',
@@ -346,11 +346,10 @@ class AIAgent {
     
     if (!input || !messagesEl) return;
     
-    // 先构建请求消息（不含当前这句），再写入历史，避免同一条消息重复发送
+    // 本轮问题只发送一次，完整回复结束后再将这一轮成对写入历史。
     const requestMessages = this.buildRequestMessages(text);
 
     // 添加用户消息到界面
-    this.addMessage('user', text);
     const welcome = messagesEl.querySelector('.ai-agent-welcome') as HTMLElement | null;
     if (welcome) welcome.hidden = true;
     messagesEl.appendChild(this.createMessageEl('user', text));
@@ -364,7 +363,7 @@ class AIAgent {
     // 联网、上下文和 MCP 共用聊天流接口；非流式展示模式在完成后整段呈现。
     const useStreamAPI = this.options.stream || this.options.search !== false || this.options.usingContext !== false || this.options.model !== AIAgent.DEFAULT_MODEL || this.selectedMCPServers().length > 0;
     const pending = useStreamAPI
-      ? this.sendStreamMessage(requestMessages, messagesEl, controller)
+      ? this.sendStreamMessage(text, requestMessages, messagesEl, controller)
       : this.sendNormalMessage(text, messagesEl, controller);
     pending.finally(() => {
       if (this.requestController === controller) {
@@ -426,7 +425,7 @@ class AIAgent {
   private buildRequestMessages(text: string): Array<{ role: string; content: string }> {
     const messages: Array<{ role: string; content: string }> = [];
 
-    if (this.options.usingContext) {
+    if (this.options.usingContext !== false) {
       for (const item of this.chatHistory) {
         messages.push({
           role: item.role === 'ai' ? 'assistant' : 'user',
@@ -457,7 +456,7 @@ class AIAgent {
       if (controller.signal.aborted || this.destroyed) return;
       const reply = data?.code === 200 ? data.data?.choices?.[0]?.message?.content : '';
       if (!reply) throw new Error(data?.msg || '抱歉，AI 服务没有返回回复，请稍后重试');
-      this.addMessage('ai', reply);
+      this.addCompletedTurn(text, reply);
       responseUI.contentEl.textContent = reply;
       responseUI.contentEl.hidden = false;
       responseUI.finish('done');
@@ -490,6 +489,7 @@ class AIAgent {
    * 来源列表随搜索事件刷新；模型回复仅在 stream 开启时逐片展示。
    */
   private async sendStreamMessage(
+    text: string,
     requestMessages: Array<{ role: string; content: string }>,
     messagesEl: HTMLDivElement,
     controller: AbortController
@@ -545,14 +545,13 @@ class AIAgent {
       if (!active()) return;
       contentEl.textContent = fullContent || 'AI 服务没有返回回复';
       contentEl.hidden = false;
-      if (fullContent) this.addMessage('ai', fullContent);
+      if (fullContent) this.addCompletedTurn(text, fullContent);
       responseUI.finish(fullContent ? 'done' : 'error');
     } catch (error) {
       if (this.destroyed) return;
       if (fullContent) {
         contentEl.textContent = fullContent;
         contentEl.hidden = false;
-        this.addMessage('ai', fullContent);
       }
       if (controller.signal.aborted) {
         responseUI.finish('stopped');
@@ -718,13 +717,13 @@ class AIAgent {
   }
 
   /**
-   * 添加消息到历史记录
-   * @param role 角色：'user' 或 'ai'
-   * @param content 消息内容
+   * 保存已完成的一轮对话，避免中断片段或未获回答的问题影响后续理解。
+   * @param question 本轮用户问题
+   * @param reply 完整 AI 回复
    */
-  private addMessage(role: 'user' | 'ai', content: string): void {
-    this.chatHistory.push({ role, content });
-    if (this.chatHistory.length > 20) this.chatHistory.shift(); // 限制历史长度
+  private addCompletedTurn(question: string, reply: string): void {
+    this.chatHistory.push({ role: 'user', content: question }, { role: 'ai', content: reply });
+    if (this.chatHistory.length > 20) this.chatHistory.splice(0, this.chatHistory.length - 20); // 保留最近十轮完整对话。
   }
 
   /**

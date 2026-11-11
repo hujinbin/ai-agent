@@ -40,13 +40,13 @@ export interface AIAgentOptions {
   model?: string;
   
   /**
-   * 是否携带多轮上下文（默认携带）
+   * 是否携带最近十轮已完成的对话上下文（默认携带）
    * @default true
    */
   usingContext?: boolean;
 
   /**
-   * 是否在回答前让后端先联网检索资料（默认开启）
+   * 是否允许后端根据当前问题与对话上下文决定联网检索（默认开启）
    * @default true
    */
   search?: boolean;
