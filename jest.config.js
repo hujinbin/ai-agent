@@ -13,6 +13,7 @@ module.exports = {
   coverageReporters: ['text', 'lcov', 'html'],
   moduleFileExtensions: ['ts', 'tsx', 'js', 'jsx'],
   transform: {
+    '^.+\\.js$': ['babel-jest', { presets: [['@babel/preset-env', { targets: { node: 'current' } }]] }],
     '^.+\\.ts$': ['ts-jest', {
       tsconfig: {
         esModuleInterop: true,
@@ -20,6 +21,7 @@ module.exports = {
       }
     }]
   },
+  transformIgnorePatterns: ['/node_modules/(?!marked/)'],
   moduleNameMapper: {
     '\\.(css|less|scss|sass)$': '<rootDir>/test/__mocks__/styleMock.js',
   },

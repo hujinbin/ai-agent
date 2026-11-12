@@ -11,7 +11,7 @@ export interface MCPServerConfig {
 export interface AIAgentOptions {
   /** 浏览器直连的 MCP 配置，令牌对浏览器可见，服务需要允许跨域访问 */
   mcpServers?: MCPServerConfig[];
-  /** 显示 MCP 扩展选择器 */
+  /** 启用 MCP 与连接状态；false 禁用，true 在缺少服务配置时也显示提示 */
   mcp?: boolean;
 
   /**
@@ -93,7 +93,7 @@ export interface AIAgentOptions {
     
     /**
      * AI 消息气泡背景色
-     * @default 浅色主题: '#f5f5f5', 深色主题: '#3c3c3c'
+     * @default 'transparent'
      */
     aiMessageBg?: string;
     

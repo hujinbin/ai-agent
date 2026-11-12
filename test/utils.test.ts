@@ -214,7 +214,7 @@ describe('工具函数和边界情况', () => {
       const aiMessage = messagesEl?.querySelector('.ai-agent-msg-ai');
       
       // 应该显示错误提示
-      expect(aiMessage?.textContent).toContain('抱歉');
+      expect(aiMessage?.textContent).toContain('回复暂时中断');
 
       jest.resetAllMocks();
     });
@@ -245,7 +245,8 @@ describe('工具函数和边界情况', () => {
       const messagesEl = document.querySelector('.ai-agent-messages');
       const aiMessage = messagesEl?.querySelector('.ai-agent-msg-ai');
       
-      expect(aiMessage?.textContent).toContain('API接口地址不存在');
+      expect(aiMessage?.textContent).toContain('回复暂时中断');
+      expect(aiMessage?.textContent).not.toContain('HTTP 404');
 
       jest.resetAllMocks();
     });
@@ -276,7 +277,8 @@ describe('工具函数和边界情况', () => {
       const messagesEl = document.querySelector('.ai-agent-messages');
       const aiMessage = messagesEl?.querySelector('.ai-agent-msg-ai');
       
-      expect(aiMessage?.textContent).toContain('API密钥验证失败');
+      expect(aiMessage?.textContent).toContain('当前暂时无法使用客服');
+      expect(aiMessage?.textContent).not.toContain('API密钥');
 
       jest.resetAllMocks();
     });

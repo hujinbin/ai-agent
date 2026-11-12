@@ -163,11 +163,13 @@ describe('客服上下文与后端搜索规划', () => {
     const followUp = (global.fetch as jest.Mock).mock.calls
       .filter(call => call[0].endsWith('/api/ai/chat/stream'))
       .map(call => JSON.parse(call[1].body)).at(-1);
-    expect(followUp.messages).toEqual([
+    expect(followUp.messages.slice(0, 3)).toEqual([
       { role: 'user', content: '找一下星河耳机的保修文章' },
       { role: 'assistant', content: '文章记载保修期限为一年' },
       { role: 'user', content: '那怎么申请它的售后？' }
     ]);
+    expect(followUp.messages.at(-1).content).toContain('本轮未使用资料服务');
+    expect(followUp.messages.at(-1).content).not.toContain('保修文章');
     expect(followUp.search).toBe(true);
   });
 });
